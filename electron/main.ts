@@ -1,5 +1,6 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
+import ApiDataHelper from './utils/ApiDataHelper';
 
 function createWindow() {
   // Create the browser window.
@@ -12,6 +13,8 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js')
     }
   });
+
+  const apiData = new ApiDataHelper();
 
   // and load the index.html of the app.
   mainWindow.loadFile('build/index.html');
