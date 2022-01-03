@@ -34,6 +34,22 @@ export default class ApiDataHelper {
             Promise.reject("API data has not changed");
     }
 
+    public async updateApiData(): Promise<ApiData> {
+        const lockfileData = await this.getLockfileData();
+        const hash = await this.getApiDataHash(lockfileData);
+
+        const leagueData = lockfileData.split(":");
+        const data = {
+            hash: hash,
+            pid: +leagueData[1],
+            port: +leagueData[2],
+            password: leagueData[3],
+            protocol: leagueData[4]
+        };
+        this._apiData = data;
+        return data;
+    }
+
     private getPid(): Promise<number> {
         return new Promise((resolve, reject) => {
             exec('wmic PROCESS WHERE "name=\'LeagueClientUx.exe\'" GET ProcessId', (err: any, stdout: string, stderr: string) => {
@@ -70,21 +86,5 @@ export default class ApiDataHelper {
                 }
             });
         });
-    }
-
-    public async updateApiData(): Promise<ApiData> {
-        const lockfileData = await this.getLockfileData();
-        const hash = await this.getApiDataHash(lockfileData);
-
-        const leagueData = lockfileData.split(":");
-        const data = {
-            hash: hash,
-            pid: +leagueData[1],
-            port: +leagueData[2],
-            password: leagueData[3],
-            protocol: leagueData[4]
-        };
-        this._apiData = data;
-        return data;
     }
 }

@@ -19,7 +19,13 @@ function createWindow() {
     .catch((e) => { console.log(e); });
 
   // and load the index.html of the app.
-  mainWindow.loadFile('build/index.html');
+  if (process.env.NODE_ENV === 'development') {
+    console.log("development");
+    mainWindow.loadURL('http://localhost:3000');
+  } else if(process.env.NODE_ENV === 'production') {
+    console.log("production");
+    mainWindow.loadFile('build/index.html');
+  }
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();

@@ -19,8 +19,8 @@
     "web-vitals": "^2.1.0"
   },
   "scripts": {
-    "start": "electron .",
-    "build": "tsc && react-scripts build && electron .",
+    "start": "set \"NODE_ENV=development\" && tsc && START \"\" react-scripts start && electron .",
+    "build": "set \"NODE_ENV=production\" && tsc && react-scripts build && electron .",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "electron-dev": "electron ."
