@@ -16,21 +16,17 @@ export default class ApiDataHelper {
     private _apiData = new ApiData();
 
     constructor() {
-        this.updateApiData();
-        /*
-            windows:
-                wmic PROCESS WHERE "name='LeagueClientUx.exe'" GET commandline
-            mac:
-                ps -A | grep LeagueClientUx
-        */
+        this.apiDataHasChanged().then(() => this.updateApiData());
     }
 
     public get apiData(): ApiData {
         return this._apiData;
     }
 
-    public async apiDataHasChanged(): Promise<boolean> {
-        return await this.getPid() !== this.apiData.pid || this.apiData.hash !== await this.getApiDataHashFromLockfile();
+    public async apiDataHasChanged(): Promise<void> {
+        return await this.getPid() !== this.apiData.pid || this.apiData.hash !== await this.getApiDataHashFromLockfile() ?
+            Promise.resolve() :
+            Promise.reject();
     }
 
     private getPid(): Promise<number> {
@@ -43,9 +39,7 @@ export default class ApiDataHelper {
 
     private async getApiDataHashFromLockfile(): Promise<string> {
         const lockfileData = await this.getLockfileData();
-        const hashSum = crypto.createHash('sha256');
-        hashSum.update(lockfileData);
-        return hashSum.digest('hex');
+        return this.getApiDataHash(lockfileData);
     }
 
     private async getApiDataHash(lockfileData: string): Promise<string> {
