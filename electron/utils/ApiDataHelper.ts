@@ -13,20 +13,25 @@ export class ApiData {
 }
 
 export default class ApiDataHelper {
-    private _apiData = new ApiData();
+    private _apiData: ApiData | undefined = undefined;
 
-    constructor() {
-        this.apiDataHasChanged().then(() => this.updateApiData());
+    private constructor() { }
+
+    public static async build(): Promise<ApiDataHelper> {
+        const apiDataHelper = new ApiDataHelper();
+        return apiDataHelper.apiDataHasChanged()
+            .then(() => apiDataHelper.updateApiData())
+            .then(() => apiDataHelper);
     }
 
-    public get apiData(): ApiData {
+    public get apiData(): ApiData | undefined {
         return this._apiData;
     }
 
     public async apiDataHasChanged(): Promise<void> {
-        return await this.getPid() !== this.apiData.pid || this.apiData.hash !== await this.getApiDataHashFromLockfile() ?
+        return await this.getPid() !== this.apiData?.pid || this.apiData?.hash !== await this.getApiDataHashFromLockfile() ?
             Promise.resolve() :
-            Promise.reject();
+            Promise.reject("API data has not changed");
     }
 
     private getPid(): Promise<number> {
@@ -72,14 +77,14 @@ export default class ApiDataHelper {
         const hash = await this.getApiDataHash(lockfileData);
 
         const leagueData = lockfileData.split(":");
-        this._apiData = {
+        const data = {
             hash: hash,
             pid: +leagueData[1],
             port: +leagueData[2],
             password: leagueData[3],
             protocol: leagueData[4]
         };
-        console.log(this.apiData);
-        return this.apiData;
+        this._apiData = data;
+        return data;
     }
 }

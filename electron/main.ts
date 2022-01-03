@@ -14,7 +14,9 @@ function createWindow() {
     }
   });
 
-  const apiData = new ApiDataHelper();
+  ApiDataHelper.build()
+    .then((e) => { console.log(e.apiData); })
+    .catch((e) => { console.log(e); });
 
   // and load the index.html of the app.
   mainWindow.loadFile('build/index.html');
