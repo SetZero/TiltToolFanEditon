@@ -1,6 +1,6 @@
+import ApiDataHelper from './utils/ApiDataHelper';
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
-import ApiDataHelper from './utils/ApiDataHelper';
 
 function createWindow() {
   // Create the browser window.
