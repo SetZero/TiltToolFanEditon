@@ -1,4 +1,4 @@
-import ApiDataHelper from './utils/ApiDataHelper';
+import ApiFetchHelper from './utils/ApiFetchHelper';
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
 
@@ -14,9 +14,9 @@ function createWindow() {
     }
   });
 
-  ApiDataHelper.build()
-    .then((e) => { console.log(e.apiData); })
-    .catch((e) => { console.log(e); });
+  ApiFetchHelper.build()
+    .then((e) => e.isUserInLobby())
+    .then((e) => console.log(e));
 
   // and load the index.html of the app.
   if (process.env.NODE_ENV === 'development') {
