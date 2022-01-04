@@ -1,6 +1,8 @@
-import ApiFetchHelper from './utils/ApiFetchHelper';
-const { app, BrowserWindow } = require('electron');
+import { ApiData } from './utils/ApiDataHelper';
+import LocalApiFetchHelper from './utils/LocalApiFetchHelper';
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
+
 
 function createWindow() {
   // Create the browser window.
@@ -14,8 +16,8 @@ function createWindow() {
     }
   });
 
-  ApiFetchHelper.build()
-    .then((e) => e.isUserInLobby())
+  LocalApiFetchHelper.build()
+    .then((e) => registerFetchHandler(e))
     .then((e) => console.log(e));
 
   // and load the index.html of the app.
@@ -29,6 +31,21 @@ function createWindow() {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
+}
+
+async function registerFetchHandler(ApiFetchHelper: LocalApiFetchHelper)
+{
+  ipcMain.on('summoner', async function (event: any, arg: any)
+  {
+    console.log(arg);
+    console.log(arg.cmd);
+    switch(arg.cmd)
+    {
+      case 'current-summoner':
+      console.log(await ApiFetchHelper.getCurrentSummoner());
+    }
+    //ApiFetchHelper.getCurrentSummoner();
+  })
 }
 
 // This method will be called when Electron has finished

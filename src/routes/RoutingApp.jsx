@@ -8,7 +8,7 @@ export default function RoutingApp()
     return(
         <BrowserRouter forceRefresh={true}>
             <Routes>
-                <Route exact path ="/" element={<Navigate to="/preload"/>} />
+                <Route exact path ="/" element={<Navigate to="/main"/>} />
                 <Route exact path="/preload" element={<PreloadApp/>} />
                 <Route path="/main" element={<MainApp/>} />
             </Routes>
