@@ -1,42 +1,67 @@
 import axios from "axios";
-import { ipcMain, ipcRenderer } from "electron";
+import { ipcMain } from "electron";
 import https from "https";
 import ApiDataHelper from "./ApiDataHelper";
 import LocalApiFetchHelper from "./LocalApiFetchHelper";
-import RiotApiDataHelper from "./RiotApiDataHelper";
+import { ClientInfo, SummonerInfo } from "./structs/ClientInfo";
 
 //https://developer.riotgames.com/apis
+
+export enum Region {
+    BR = 'br1.api.riotgames.com',
+    EUN = 'eun1.api.riotgames.com',
+    EUW = 'euw1.api.riotgames.com',
+    JP = 'jp1.api.riotgames.com',
+    KR = 'kr.api.riotgames.com',
+    LA1 = 'la1.api.riotgames.com',
+    LA2 = 'la2.api.riotgames.com',
+    NA = 'na1.api.riotgames.com',
+    OC = 'oc1.api.riotgames.com',
+    TR = 'tr1.api.riotgames.com',
+    RU =  'ru.api.riotgames.com',
+
+}
 
 var riot_api_key = process.env.REACT_APP_API_KEY;
 
 export default class RiotApiFetchHelper 
 {
-    private riotApiDataHelper : RiotApiDataHelper = new RiotApiDataHelper();
+    private _region: Region | undefined = undefined;
+
+    public get region() : Region | undefined{
+        return this._region;
+    }
+    
+    public set region(region : Region | undefined){
+        this._region = region;
+    }
+
+    //private _riotApiDataHelper : RiotApiDataHelper = new RiotApiDataHelper();
+    private _clientInfo : ClientInfo | undefined;
 
     private constructor() { }
 
-    public static async build() : Promise<RiotApiFetchHelper>
+    public static async build(clientInfo : ClientInfo) : Promise<RiotApiFetchHelper>
     {
         const riotApiFetchHelper = new RiotApiFetchHelper();
-        await riotApiFetchHelper.init();
-        console.log("wooopwooopooooooooooooooooooooo");
+        riotApiFetchHelper._clientInfo = clientInfo;
+        riotApiFetchHelper.region = riotApiFetchHelper._clientInfo.region;
+        console.log(riotApiFetchHelper.region);
         return riotApiFetchHelper;
     }
 
-    private async init()
+    public async getSummonerInfo(summoners : Array<String>)
     {
-        console.log(ipcRenderer);
-        console.log(await ipcRenderer.invoke('riotclient', {cmd: 'region-locale', method:'GET'}))
-        console.log("-------------------------------ASDF2");
-        this.riotApiDataHelper.setRegion(await ipcRenderer.invoke('riotclient', {cmd: 'region-locale', method:'GET'}));
-        console.log("+++++++++++++++++++++++++++++++ASDF3");
-        console.log(this.riotApiDataHelper.region);
-        console.log("...............................ASDF3");
+        let s = new Array<SummonerInfo>();
+        s.push({})
+
+        return s;
     }
+
 
     private buildRiotBaseUrl() 
     {
-        return "https://" + this.riotApiDataHelper.region;
+        return "https://" + this.region;
     }
 
     public async getChampionInfo()
@@ -49,10 +74,11 @@ export default class RiotApiFetchHelper
 
     public async test()
     {
-        const apiCallUrl = (await this.buildRiotBaseUrl())+"/lol/summoner/v4/summoners/me"+process.env.REACT_APP_API_KEY;
+        const apiCallUrl = (await this.buildRiotBaseUrl())+"/lol/summoner/v4/summoners/me?"+riot_api_key;
         console.log(apiCallUrl);
         
+        console.log(process.env.REACT_APP_API_KEY);
 
-        return (await axios.get(apiCallUrl, {})).data;
+        //return (await axios.get(apiCallUrl, {})).data;
     }
 }

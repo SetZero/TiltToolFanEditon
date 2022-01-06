@@ -1,9 +1,10 @@
 import ApiDataHelper, { ApiData } from './utils/ApiDataHelper';
 import LocalApiFetchHelper from './utils/LocalApiFetchHelper';
-import RiotApiDataHelper from './utils/RiotApiDataHelper';
-import RiotApiFetchHelper from './utils/RiotApiFetchHelper';
+import RiotApiFetchHelper, { Region } from './utils/RiotApiFetchHelper';
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
+
+import { ClientInfo } from './utils/structs/ClientInfo';
 
 
 function createWindow() {
@@ -24,7 +25,7 @@ function createWindow() {
     let localApiFetchHelper = await setupLocalApiFetchHelper();
   
     // setup and register external riot api fetcher
-    let riotApiFetchHelper = await setupRiotApiFetchHelper();  
+    let riotApiFetchHelper = await setupRiotApiFetchHelper(localApiFetchHelper);  
   })()
   .catch((e) => console.log(e));
 
@@ -48,14 +49,19 @@ async function setupLocalApiFetchHelper()
   return localApiFetchHelper;
 }
 
-async function setupRiotApiFetchHelper()
+async function setupRiotApiFetchHelper(localApiFetchHelper : LocalApiFetchHelper)
 {
-  let riotApiFetchHelper = await RiotApiFetchHelper.build();
-  registerRiotApiFetchHandler(riotApiFetchHelper);
+  let riotApiFetchHelper = await RiotApiFetchHelper.build(await createClientInfo(localApiFetchHelper));
+  registerRiotApiFetchHandler(riotApiFetchHelper);  
   return riotApiFetchHelper;
 }
 
-async function registerFetchHandler(ApiFetchHelper: LocalApiFetchHelper)
+async function createClientInfo(localApiFetchHelper: LocalApiFetchHelper) : Promise<ClientInfo>
+{
+  return {region : Region[(await localApiFetchHelper.getRegion()) as unknown as keyof typeof Region]}; // ¯\_(ツ)_/¯
+}
+
+async function registerFetchHandler(localApiFetchHelper: LocalApiFetchHelper)
 {
   ipcMain.on('summoner', async function (event: any, arg: any)
   {
@@ -64,33 +70,29 @@ async function registerFetchHandler(ApiFetchHelper: LocalApiFetchHelper)
     switch(arg.cmd)
     {
       case 'current-summoner':
-      console.log(await ApiFetchHelper.getCurrentSummoner());
+      console.log(await localApiFetchHelper.getCurrentSummoner());
     }
   });
+}
 
-  // TODO: find out why passing variables using ipcMain.on in MainApp.jsx using:
-  // window.ipcRenderer.on, is not recognized as a function
-  // otherwise, attach handle to ipcMain and live with it:
-  ipcMain.handle('riotclient', async (event, arg) =>
+async function registerRiotApiFetchHandler(riotApiFetchHelper : RiotApiFetchHelper)
+{
+  ipcMain.on('custom', async (event, arg) =>
   {
     switch(arg.cmd)
     {
-      case 'region-locale':
-        return (await ApiFetchHelper.getRegion());
+      case 'set-region':
+        console.log("set-region was called");
+        return (riotApiFetchHelper.region = arg.region);
     }
   });
 
-}
-
-async function registerRiotApiFetchHandler(RiotApiFetchHelper : RiotApiFetchHelper)
-{
   ipcMain.handle('riot-summoner', async (event, arg) =>
   {
     switch(arg.cmd)
     {
       case 'me':
-        console.log("TEST");
-        return (await RiotApiFetchHelper.test())
+        return (await riotApiFetchHelper.test())
     }
   });
 }
