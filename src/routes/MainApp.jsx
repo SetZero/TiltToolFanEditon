@@ -9,12 +9,29 @@ function getCurrentSummoner()
   window.ipcRenderer.send('summoner', {cmd: 'current-summoner', method:'GET'});
 }
 
+async function getRegion()
+{
+  const region = await window.ipcRenderer.invoke('riotclient', {cmd: 'region-locale', method:'GET'});
+  console.log(region);
+
+  // TODO: set region as global variable for riot api fetch handler
+}
+
+async function riot_test()
+{
+  const x = await window.ipcRenderer.invoke('riot-summoner', {cmd: 'me', method:'GET'});
+  console.log(x);
+}
+
 function MainApp() {
   return (
     <div className="MainApp">
       <header className="MainApp-header">
         <h1>Main Application</h1>
         <button onClick={() => getCurrentSummoner()}>get current summoner</button>
+        <button onClick={() => getRegion()}>getRegion</button>
+        <button onClick={() => riot_test()}>riot-api-test</button>
+        <p>{riot_api_key}</p>
       </header>
     </div>
   );

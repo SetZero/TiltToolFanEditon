@@ -2,6 +2,7 @@ import ApiDataHelper, { ApiData } from "./ApiDataHelper";
 import axios from "axios";
 
 import https from "https";
+import { ipcRenderer } from "electron";
 
 export default class LocalApiFetchHelper {
     // https://lcu.vivide.re/
@@ -45,6 +46,27 @@ export default class LocalApiFetchHelper {
                 }
             }
         )).data;
+    }
+
+    public async getRegion()
+    {
+        const apiData = await this.apiDataHelper?.apiData;
+        const apiCallUrl = (await this.buildLocalBaseUrl())+"riotclient/region-locale";
+
+        return (await axios.get(apiCallUrl, 
+            {
+                headers:
+                {
+
+                },
+                httpsAgent: new https.Agent({rejectUnauthorized: false}),
+                auth:
+                {
+                    username: "riot",
+                    password: apiData?.password ?? ''
+                }
+            }
+        )).data["region"];
     }
 
 

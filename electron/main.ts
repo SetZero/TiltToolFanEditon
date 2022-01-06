@@ -1,5 +1,7 @@
-import { ApiData } from './utils/ApiDataHelper';
+import ApiDataHelper, { ApiData } from './utils/ApiDataHelper';
 import LocalApiFetchHelper from './utils/LocalApiFetchHelper';
+import RiotApiDataHelper from './utils/RiotApiDataHelper';
+import RiotApiFetchHelper from './utils/RiotApiFetchHelper';
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 
@@ -16,9 +18,15 @@ function createWindow() {
     }
   });
 
-  LocalApiFetchHelper.build()
-    .then((e) => registerFetchHandler(e))
-    .then((e) => console.log(e));
+  (async () => 
+  {
+    // setup and register local api fetcher
+    let localApiFetchHelper = await setupLocalApiFetchHelper();
+  
+    // setup and register external riot api fetcher
+    let riotApiFetchHelper = await setupRiotApiFetchHelper();  
+  })()
+  .catch((e) => console.log(e));
 
   // and load the index.html of the app.
   if (process.env.NODE_ENV === 'development') {
@@ -33,6 +41,20 @@ function createWindow() {
   mainWindow.webContents.openDevTools();
 }
 
+async function setupLocalApiFetchHelper()
+{
+  let localApiFetchHelper = await LocalApiFetchHelper.build();
+  registerFetchHandler(localApiFetchHelper);
+  return localApiFetchHelper;
+}
+
+async function setupRiotApiFetchHelper()
+{
+  let riotApiFetchHelper = await RiotApiFetchHelper.build();
+  registerRiotApiFetchHandler(riotApiFetchHelper);
+  return riotApiFetchHelper;
+}
+
 async function registerFetchHandler(ApiFetchHelper: LocalApiFetchHelper)
 {
   ipcMain.on('summoner', async function (event: any, arg: any)
@@ -44,9 +66,35 @@ async function registerFetchHandler(ApiFetchHelper: LocalApiFetchHelper)
       case 'current-summoner':
       console.log(await ApiFetchHelper.getCurrentSummoner());
     }
-    //ApiFetchHelper.getCurrentSummoner();
-  })
+  });
+
+  // TODO: find out why passing variables using ipcMain.on in MainApp.jsx using:
+  // window.ipcRenderer.on, is not recognized as a function
+  // otherwise, attach handle to ipcMain and live with it:
+  ipcMain.handle('riotclient', async (event, arg) =>
+  {
+    switch(arg.cmd)
+    {
+      case 'region-locale':
+        return (await ApiFetchHelper.getRegion());
+    }
+  });
+
 }
+
+async function registerRiotApiFetchHandler(RiotApiFetchHelper : RiotApiFetchHelper)
+{
+  ipcMain.handle('riot-summoner', async (event, arg) =>
+  {
+    switch(arg.cmd)
+    {
+      case 'me':
+        console.log("TEST");
+        return (await RiotApiFetchHelper.test())
+    }
+  });
+}
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
