@@ -7,44 +7,6 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const dotenv = require('dotenv').config({ path: "electron.env" });
 const path = require('path');
 
-
-function createWindow() {
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    frame: false,
-    transparent: true,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
-    }
-  });
-
-  (async () => {
-    // setup and register local api fetcher
-    let localApiFetchHelper = await setupLocalApiFetchHelper();
-
-    // setup and register external riot api fetcher
-    let riotApiFetchHelper = await setupRiotApiFetchHelper(localApiFetchHelper);
-  })()
-    .catch((e) => console.log(e));
-
-  // and load the index.html of the app.
-  if (process.env.NODE_ENV === 'development') {
-    console.log("development");
-    mainWindow.loadURL('http://localhost:3000');
-  } else if (process.env.NODE_ENV === 'production') {
-    console.log("production");
-    mainWindow.loadFile('build/index.html');
-  }
-
-  // DEBUG LOGS
-  //console.log("process.env: ", process.env);
-
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
-}
-
 async function setupLocalApiFetchHelper() {
   let localApiFetchHelper = await LocalApiFetchHelper.build();
   registerFetchHandler(localApiFetchHelper);
@@ -86,11 +48,48 @@ async function registerRiotApiFetchHandler(riotApiFetchHelper: RiotApiFetchHelpe
     switch (arg.cmd) {
       case 'me':
         console.log("@ipcMain.handle('riot-summoner): ", process.env.RIOT_API_KEY);
-        return (await riotApiFetchHelper.test(process.env.RIOT_API_KEY))
+        return riotApiFetchHelper.test(process.env.RIOT_API_KEY)
     }
   });
 }
 
+
+function createWindow() {
+  // Create the browser window.
+  const mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    frame: false,
+    transparent: true,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js')
+    }
+  });
+
+  (async () => {
+    // setup and register local api fetcher
+    let localApiFetchHelper = await setupLocalApiFetchHelper();
+
+    // setup and register external riot api fetcher
+    let riotApiFetchHelper = await setupRiotApiFetchHelper(localApiFetchHelper);
+  })()
+    .catch((e) => console.log(e));
+
+  // and load the index.html of the app.
+  if (process.env.NODE_ENV === 'development') {
+    console.log("development");
+    mainWindow.loadURL('http://localhost:3000');
+  } else if (process.env.NODE_ENV === 'production') {
+    console.log("production");
+    mainWindow.loadFile('build/index.html');
+  }
+
+  // DEBUG LOGS
+  //console.log("process.env: ", process.env);
+
+  // Open the DevTools.
+  mainWindow.webContents.openDevTools();
+}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

@@ -58,14 +58,14 @@ export default class RiotApiFetchHelper {
 
     public async getChampionInfo() {
         // todo
-        const apiCallUrl = (await this.buildRiotBaseUrl()) + "";
+        const apiCallUrl = this.buildRiotBaseUrl() + "";
 
         return (await axios.get(apiCallUrl, {})).data;
     }
 
     public async test(rpi_key: String | undefined) {
         const name = "asdf"
-        const apiCallUrl = (await this.buildRiotBaseUrl()) + "/lol/summoner/v4/summoners/by-name/" + name + "?api_key=" + rpi_key;
+        const apiCallUrl = this.buildRiotBaseUrl() + "/lol/summoner/v4/summoners/by-name/" + name + "?api_key=" + rpi_key;
         console.log(apiCallUrl);
 
         console.log(process.env.REACT_APP_API_KEY);
