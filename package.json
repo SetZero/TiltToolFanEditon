@@ -13,6 +13,8 @@
     "@testing-library/user-event": "^13.2.1",
     "@types/react": "^17.0.38",
     "@types/react-dom": "^17.0.11",
+    "axios": "^0.24.0",
+    "dotenv": "^10.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router": "^6.2.1",
@@ -21,7 +23,8 @@
     "web-vitals": "^2.1.0"
   },
   "scripts": {
-    "start": "set \"NODE_ENV=development\" && tsc && START \"\" react-scripts start && electron .",
+    "start-windows": "set \"NODE_ENV=development\" && tsc && START \"\" react-scripts start && electron .",
+    "start": "yarn start-windows",
     "build": "set \"NODE_ENV=production\" && tsc && react-scripts build && electron .",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
