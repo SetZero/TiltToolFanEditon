@@ -14,31 +14,29 @@ export enum Region {
     NA = 'na1.api.riotgames.com',
     OC = 'oc1.api.riotgames.com',
     TR = 'tr1.api.riotgames.com',
-    RU =  'ru.api.riotgames.com',
+    RU = 'ru.api.riotgames.com',
 
 }
 
 var riot_api_key = process.env.REACT_APP_API_KEY;
 
-export default class RiotApiFetchHelper 
-{
+export default class RiotApiFetchHelper {
     private _region: Region | undefined = undefined;
 
-    public get region() : Region | undefined{
+    public get region(): Region | undefined {
         return this._region;
     }
-    
-    public set region(region : Region | undefined){
+
+    public set region(region: Region | undefined) {
         this._region = region;
     }
 
     //private _riotApiDataHelper : RiotApiDataHelper = new RiotApiDataHelper();
-    private _clientInfo : ClientInfo | undefined;
+    private _clientInfo: ClientInfo | undefined;
 
     private constructor() { }
 
-    public static async build(clientInfo : ClientInfo) : Promise<RiotApiFetchHelper>
-    {
+    public static async build(clientInfo: ClientInfo): Promise<RiotApiFetchHelper> {
         const riotApiFetchHelper = new RiotApiFetchHelper();
         riotApiFetchHelper._clientInfo = clientInfo;
         riotApiFetchHelper.region = riotApiFetchHelper._clientInfo.region;
@@ -46,8 +44,7 @@ export default class RiotApiFetchHelper
         return riotApiFetchHelper;
     }
 
-    public async getSummonerInfo(summoners : Array<String>)
-    {
+    public async getSummonerInfo(summoners: Array<String>) {
         let s = new Array<SummonerInfo>();
         s.push({})
 
@@ -55,25 +52,22 @@ export default class RiotApiFetchHelper
     }
 
 
-    private buildRiotBaseUrl() 
-    {
+    private buildRiotBaseUrl() {
         return "https://" + this.region;
     }
 
-    public async getChampionInfo()
-    {
+    public async getChampionInfo() {
         // todo
-        const apiCallUrl = (await this.buildRiotBaseUrl())+"";
+        const apiCallUrl = (await this.buildRiotBaseUrl()) + "";
 
         return (await axios.get(apiCallUrl, {})).data;
     }
 
-    public async test(rpi_key : String | undefined)
-    {
+    public async test(rpi_key: String | undefined) {
         const name = "asdf"
-        const apiCallUrl = (await this.buildRiotBaseUrl())+"/lol/summoner/v4/summoners/by-name/"+name+"?api_key="+rpi_key;
+        const apiCallUrl = (await this.buildRiotBaseUrl()) + "/lol/summoner/v4/summoners/by-name/" + name + "?api_key=" + rpi_key;
         console.log(apiCallUrl);
-        
+
         console.log(process.env.REACT_APP_API_KEY);
 
         return (await axios.get(apiCallUrl, {})).data;

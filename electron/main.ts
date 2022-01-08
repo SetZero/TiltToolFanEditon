@@ -4,7 +4,7 @@ import RiotApiFetchHelper, { Region } from './utils/RiotApiFetchHelper';
 import { ClientInfo } from './utils/structs/ClientInfo';
 
 const { app, BrowserWindow, ipcMain } = require('electron');
-const dotenv = require('dotenv').config({path: "electron.env"});
+const dotenv = require('dotenv').config({ path: "electron.env" });
 const path = require('path');
 
 
@@ -20,21 +20,20 @@ function createWindow() {
     }
   });
 
-  (async () => 
-  {
+  (async () => {
     // setup and register local api fetcher
     let localApiFetchHelper = await setupLocalApiFetchHelper();
-  
+
     // setup and register external riot api fetcher
-    let riotApiFetchHelper = await setupRiotApiFetchHelper(localApiFetchHelper);  
+    let riotApiFetchHelper = await setupRiotApiFetchHelper(localApiFetchHelper);
   })()
-  .catch((e) => console.log(e));
+    .catch((e) => console.log(e));
 
   // and load the index.html of the app.
   if (process.env.NODE_ENV === 'development') {
     console.log("development");
     mainWindow.loadURL('http://localhost:3000');
-  } else if(process.env.NODE_ENV === 'production') {
+  } else if (process.env.NODE_ENV === 'production') {
     console.log("production");
     mainWindow.loadFile('build/index.html');
   }
@@ -46,56 +45,45 @@ function createWindow() {
   mainWindow.webContents.openDevTools();
 }
 
-async function setupLocalApiFetchHelper()
-{
+async function setupLocalApiFetchHelper() {
   let localApiFetchHelper = await LocalApiFetchHelper.build();
   registerFetchHandler(localApiFetchHelper);
   return localApiFetchHelper;
 }
 
-async function setupRiotApiFetchHelper(localApiFetchHelper : LocalApiFetchHelper)
-{
+async function setupRiotApiFetchHelper(localApiFetchHelper: LocalApiFetchHelper) {
   let riotApiFetchHelper = await RiotApiFetchHelper.build(await createClientInfo(localApiFetchHelper));
-  registerRiotApiFetchHandler(riotApiFetchHelper);  
+  registerRiotApiFetchHandler(riotApiFetchHelper);
   return riotApiFetchHelper;
 }
 
-async function createClientInfo(localApiFetchHelper: LocalApiFetchHelper) : Promise<ClientInfo>
-{
-  return {region : Region[(await localApiFetchHelper.getRegion()) as unknown as keyof typeof Region]}; // ¯\_(ツ)_/¯
+async function createClientInfo(localApiFetchHelper: LocalApiFetchHelper): Promise<ClientInfo> {
+  return { region: Region[(await localApiFetchHelper.getRegion()) as unknown as keyof typeof Region] }; // ¯\_(ツ)_/¯
 }
 
-async function registerFetchHandler(localApiFetchHelper: LocalApiFetchHelper)
-{
-  ipcMain.on('summoner', async function (event: any, arg: any)
-  {
+async function registerFetchHandler(localApiFetchHelper: LocalApiFetchHelper) {
+  ipcMain.on('summoner', async function (event: any, arg: any) {
     console.log(arg);
     console.log(arg.cmd);
-    switch(arg.cmd)
-    {
+    switch (arg.cmd) {
       case 'current-summoner':
-      console.log(await localApiFetchHelper.getCurrentSummoner());
+        console.log(await localApiFetchHelper.getCurrentSummoner());
     }
   });
 }
 
-async function registerRiotApiFetchHandler(riotApiFetchHelper : RiotApiFetchHelper)
-{
+async function registerRiotApiFetchHandler(riotApiFetchHelper: RiotApiFetchHelper) {
   // riot api documentation (https://developer.riotgames.com/apis)
-  ipcMain.on('custom', async (event, arg) =>
-  {
-    switch(arg.cmd)
-    {
+  ipcMain.on('custom', async (event, arg) => {
+    switch (arg.cmd) {
       case 'set-region':
         console.log("set-region was called");
         return (riotApiFetchHelper.region = arg.region);
     }
   });
 
-  ipcMain.handle('riot-summoner', async (event, arg) =>
-  {
-    switch(arg.cmd)
-    {
+  ipcMain.handle('riot-summoner', async (event, arg) => {
+    switch (arg.cmd) {
       case 'me':
         console.log("@ipcMain.handle('riot-summoner): ", process.env.RIOT_API_KEY);
         return (await riotApiFetchHelper.test(process.env.RIOT_API_KEY))

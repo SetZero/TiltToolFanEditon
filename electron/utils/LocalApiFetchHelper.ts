@@ -25,18 +25,17 @@ export default class LocalApiFetchHelper {
         const username = "riot";
     }
 
-    public async getCurrentSummoner()
-    {
+    public async getCurrentSummoner() {
         const apiData = await this.apiDataHelper?.apiData;
-        const apiCallUrl = (await this.buildLocalBaseUrl())+"lol-summoner/v1/current-summoner";
+        const apiCallUrl = (await this.buildLocalBaseUrl()) + "lol-summoner/v1/current-summoner";
 
-        return (await axios.get(apiCallUrl, 
+        return (await axios.get(apiCallUrl,
             {
                 headers:
                 {
 
                 },
-                httpsAgent: new https.Agent({rejectUnauthorized: false}),
+                httpsAgent: new https.Agent({ rejectUnauthorized: false }),
                 auth:
                 {
                     username: "riot",
@@ -46,18 +45,17 @@ export default class LocalApiFetchHelper {
         )).data;
     }
 
-    public async getRegion()
-    {
+    public async getRegion() {
         const apiData = await this.apiDataHelper?.apiData;
-        const apiCallUrl = (await this.buildLocalBaseUrl())+"riotclient/region-locale";
+        const apiCallUrl = (await this.buildLocalBaseUrl()) + "riotclient/region-locale";
 
-        return (await axios.get(apiCallUrl, 
+        return (await axios.get(apiCallUrl,
             {
                 headers:
                 {
 
                 },
-                httpsAgent: new https.Agent({rejectUnauthorized: false}),
+                httpsAgent: new https.Agent({ rejectUnauthorized: false }),
                 auth:
                 {
                     username: "riot",
