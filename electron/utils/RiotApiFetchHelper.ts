@@ -1,8 +1,4 @@
 import axios from "axios";
-import { ipcMain } from "electron";
-import https from "https";
-import ApiDataHelper from "./ApiDataHelper";
-import LocalApiFetchHelper from "./LocalApiFetchHelper";
 import { ClientInfo, SummonerInfo } from "./structs/ClientInfo";
 
 //https://developer.riotgames.com/apis
@@ -72,13 +68,14 @@ export default class RiotApiFetchHelper
         return (await axios.get(apiCallUrl, {})).data;
     }
 
-    public async test()
+    public async test(rpi_key : String | undefined)
     {
-        const apiCallUrl = (await this.buildRiotBaseUrl())+"/lol/summoner/v4/summoners/me?"+riot_api_key;
+        const name = "asdf"
+        const apiCallUrl = (await this.buildRiotBaseUrl())+"/lol/summoner/v4/summoners/by-name/"+name+"?api_key="+rpi_key;
         console.log(apiCallUrl);
         
         console.log(process.env.REACT_APP_API_KEY);
 
-        //return (await axios.get(apiCallUrl, {})).data;
+        return (await axios.get(apiCallUrl, {})).data;
     }
 }

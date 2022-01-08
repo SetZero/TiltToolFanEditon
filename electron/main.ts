@@ -1,10 +1,11 @@
 import ApiDataHelper, { ApiData } from './utils/ApiDataHelper';
 import LocalApiFetchHelper from './utils/LocalApiFetchHelper';
 import RiotApiFetchHelper, { Region } from './utils/RiotApiFetchHelper';
-const { app, BrowserWindow, ipcMain } = require('electron');
-const path = require('path');
-
 import { ClientInfo } from './utils/structs/ClientInfo';
+
+const { app, BrowserWindow, ipcMain } = require('electron');
+const dotenv = require('dotenv').config({path: "electron.env"});
+const path = require('path');
 
 
 function createWindow() {
@@ -37,6 +38,9 @@ function createWindow() {
     console.log("production");
     mainWindow.loadFile('build/index.html');
   }
+
+  // DEBUG LOGS
+  //console.log("process.env: ", process.env);
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
@@ -77,6 +81,7 @@ async function registerFetchHandler(localApiFetchHelper: LocalApiFetchHelper)
 
 async function registerRiotApiFetchHandler(riotApiFetchHelper : RiotApiFetchHelper)
 {
+  // riot api documentation (https://developer.riotgames.com/apis)
   ipcMain.on('custom', async (event, arg) =>
   {
     switch(arg.cmd)
@@ -92,7 +97,8 @@ async function registerRiotApiFetchHandler(riotApiFetchHelper : RiotApiFetchHelp
     switch(arg.cmd)
     {
       case 'me':
-        return (await riotApiFetchHelper.test())
+        console.log("@ipcMain.handle('riot-summoner): ", process.env.RIOT_API_KEY);
+        return (await riotApiFetchHelper.test(process.env.RIOT_API_KEY))
     }
   });
 }

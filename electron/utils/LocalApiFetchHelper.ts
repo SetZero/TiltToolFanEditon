@@ -1,8 +1,6 @@
 import ApiDataHelper, { ApiData } from "./ApiDataHelper";
 import axios from "axios";
-
 import https from "https";
-import { ipcRenderer } from "electron";
 
 export default class LocalApiFetchHelper {
     // https://lcu.vivide.re/
