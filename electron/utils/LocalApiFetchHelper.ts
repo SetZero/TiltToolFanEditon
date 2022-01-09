@@ -6,13 +6,8 @@ export default class LocalApiFetchHelper {
     // https://lcu.vivide.re/
     private apiDataHelper: ApiDataHelper | undefined;
 
-    private constructor() { }
-
-    public static async build(): Promise<LocalApiFetchHelper> {
-        const apiFetchHelper = new LocalApiFetchHelper();
-        return ApiDataHelper.build()
-            .then((e) => apiFetchHelper.apiDataHelper = e)
-            .then(() => apiFetchHelper);
+    public constructor(dataHelper: ApiDataHelper) {
+        this.apiDataHelper = dataHelper;
     }
 
     private async buildLocalBaseUrl() {
