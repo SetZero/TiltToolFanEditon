@@ -1,5 +1,6 @@
 import ApiDataHelper from "./ApiDataHelper";
 import WebSocket, { EventEmitter } from "ws";
+import NamedEvent from "./NamedEvent";
 
 
 enum MessageTypes {
@@ -16,6 +17,9 @@ enum MessageTypes {
 
 export default class WebSocketApiHelper {
     private apiDataHelper: ApiDataHelper;
+    private readonly onCreateEvent = new NamedEvent<any>(); // todo create object for this
+    private readonly onDeleteEvent = new NamedEvent<any>(); // todo create object for this
+    private readonly onUpdateEvent = new NamedEvent<any>(); // todo create object for this
 
     public constructor(dataHelper: ApiDataHelper) {
         this.apiDataHelper = dataHelper;
@@ -66,7 +70,7 @@ export default class WebSocketApiHelper {
                             this.processLeagueEvent(event);
                         }
                     } catch (e) {
-                        console.log("Message could not be parsed: " + data);
+                        console.log("Message could not be parsed: (" + e + ");; " + data);
                     }
                     break;
                 default:
@@ -78,17 +82,32 @@ export default class WebSocketApiHelper {
     private processLeagueEvent(event: any) {
         switch(event.eventType) {
             case "Update":
+                this.onUpdateEvent.trigger(event.uri, event.data);
                 console.log("ApiUpdateEvent: " + event.uri);
                 break;
             case "Create":
-                console.log("ApiCreateEvent: " /*+ event.data.payload*/);
+                this.onCreateEvent.trigger(event.uri, event.data);
+                console.log("ApiCreateEvent: " + event.uri);
                 break;
             case "Delete":
-                console.log("ApiDeleteEvent");
+                this.onDeleteEvent.trigger(event.uri, event.data);
+                console.log("ApiDeleteEvent: " + event.uri);
                 break;
             default:
                 console.log("Unknown event: " + event.eventType);
         }
+    }
+
+    public get CreateEvent() {
+        return this.onCreateEvent.expose();
+    }
+
+    public get DeleteEvent() {
+        return this.onDeleteEvent.expose();
+    }
+
+    public get UpdateEvent() {
+        return this.onUpdateEvent.expose();
     }
 
     public async start() {
