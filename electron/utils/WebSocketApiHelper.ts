@@ -65,7 +65,7 @@ export default class WebSocketApiHelper {
                     break;
                 case MessageTypes.Event:
                     try {
-                        if(message.event === "OnJsonApiEvent") {
+                        if (message.event === "OnJsonApiEvent") {
                             const event = JSON.parse(message.data);
                             this.processLeagueEvent(event);
                         }
@@ -80,18 +80,18 @@ export default class WebSocketApiHelper {
     }
 
     private processLeagueEvent(event: any) {
-        switch(event.eventType) {
+        switch (event.eventType) {
             case "Update":
                 this.onUpdateEvent.trigger(event.uri, event.data);
-                console.log("ApiUpdateEvent: " + event.uri);
+                // console.log("ApiUpdateEvent: " + event.uri);
                 break;
             case "Create":
                 this.onCreateEvent.trigger(event.uri, event.data);
-                console.log("ApiCreateEvent: " + event.uri);
+                // console.log("ApiCreateEvent: " + event.uri);
                 break;
             case "Delete":
                 this.onDeleteEvent.trigger(event.uri, event.data);
-                console.log("ApiDeleteEvent: " + event.uri);
+                // console.log("ApiDeleteEvent: " + event.uri);
                 break;
             default:
                 console.log("Unknown event: " + event.eventType);

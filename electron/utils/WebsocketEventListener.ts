@@ -1,8 +1,23 @@
 import ApiDataHelper from "./ApiDataHelper";
 import WebsocketApiHelper from "./WebSocketApiHelper";
 
+interface TeamMember {
+    assignedPosition: string,
+    cellId: number,
+    championId: number,
+    championPickIntent: number,
+    entitledFeatureType: string,
+    selectedSkinId: number,
+    spell1Id: number,
+    spell2Id: number,
+    summonerId: number,
+    team: number,
+    wardSkinId: number
+}
 export class WebsocketEventListener {
     private readonly websocketApiHelper: WebsocketApiHelper;
+
+    private myTeam: TeamMember[] = [];
 
     constructor(dataHelper: ApiDataHelper) {
         this.websocketApiHelper = new WebsocketApiHelper(dataHelper);
@@ -12,6 +27,7 @@ export class WebsocketEventListener {
         this.websocketApiHelper.DeleteEvent.on("/lol-lobby/v2/lobby", (data) => this.lobbyDeleteListener(data));
         this.websocketApiHelper.UpdateEvent.on("/lol-lobby/v2/lobby/members", (data) => this.updateMemberListener(data));
         this.websocketApiHelper.DeleteEvent.on("/lol-login/v1/session", (data) => this.logoutListener(data));
+        this.websocketApiHelper.UpdateEvent.on("/lol-champ-select/v1/session", (data) => this.sessionUpdate(data));
     }
 
     private lobbyCreateListener(data: any) {
@@ -33,4 +49,12 @@ export class WebsocketEventListener {
         console.log("=== [DELETE] /lol-login/v1/session ===");
         console.log(data);
     }
+
+    private sessionUpdate(data: any) {
+        console.log("=== [UPDATE] /lol-champ-select/v1/session ===");
+        const newElements = (data.myTeam as TeamMember[]).filter(x => !this.myTeam.includes(x));
+        this.myTeam = data.myTeam;
+        console.log(newElements);
+    }
+
 }
