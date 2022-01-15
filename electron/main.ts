@@ -3,7 +3,9 @@ import WebSocketApiHelper from './utils/WebSocketApiHelper';
 import LocalApiFetchHelper from './utils/LocalApiFetchHelper';
 import RiotApiFetchHelper, { Region } from './utils/RiotApiFetchHelper';
 import { ClientInfo } from './utils/structs/ClientInfo';
-import { WebsocketEventListener } from './utils/WebsocketEventListener';
+import WebsocketLobbyListener from './utils/lobby/WebsocketLobbyListener';
+import LobbyMemberManager from './utils/lobby/LobbyMemberManager';
+import MatchHandler from './utils/MatchHandler';
 
 const { app, BrowserWindow, ipcMain } = require('electron');
 const dotenv = require('dotenv').config({ path: "electron.env" });
@@ -17,10 +19,6 @@ async function setupLocalApiFetchHelper(dataHelper: ApiDataHelper) {
   let localApiFetchHelper = new LocalApiFetchHelper(dataHelper);
   registerFetchHandler(localApiFetchHelper);
   return localApiFetchHelper;
-}
-
-async function setupWebsocketEventListener(dataHelper: ApiDataHelper) {
-  return new WebsocketEventListener(dataHelper);
 }
 
 async function setupRiotApiFetchHelper(localApiFetchHelper: LocalApiFetchHelper) {
@@ -84,7 +82,7 @@ function createWindow() {
     let localApiFetchHelper = await setupLocalApiFetchHelper(dataHelper);
 
     // setup websocket api helper
-    let webSocketApiHelper = await setupWebsocketEventListener(dataHelper);
+    new MatchHandler(dataHelper);
 
     // setup and register external riot api fetcher
     let riotApiFetchHelper = await setupRiotApiFetchHelper(localApiFetchHelper);

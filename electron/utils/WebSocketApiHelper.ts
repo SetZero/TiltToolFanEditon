@@ -1,6 +1,6 @@
 import ApiDataHelper from "./ApiDataHelper";
 import WebSocket, { EventEmitter } from "ws";
-import NamedEvent from "./NamedEvent";
+import NamedEvent from "./events/NamedEvent";
 
 
 enum MessageTypes {
@@ -17,9 +17,9 @@ enum MessageTypes {
 
 export default class WebSocketApiHelper {
     private apiDataHelper: ApiDataHelper;
-    private readonly onCreateEvent = new NamedEvent<any>(); // todo create object for this
-    private readonly onDeleteEvent = new NamedEvent<any>(); // todo create object for this
-    private readonly onUpdateEvent = new NamedEvent<any>(); // todo create object for this
+    private readonly onCreateEvent = new NamedEvent<string, any>(); // todo create object for this
+    private readonly onDeleteEvent = new NamedEvent<string, any>(); // todo create object for this
+    private readonly onUpdateEvent = new NamedEvent<string, any>(); // todo create object for this
 
     public constructor(dataHelper: ApiDataHelper) {
         this.apiDataHelper = dataHelper;
