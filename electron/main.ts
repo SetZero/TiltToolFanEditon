@@ -82,7 +82,8 @@ function createWindow() {
     let localApiFetchHelper = await setupLocalApiFetchHelper(dataHelper);
 
     // setup websocket api helper
-    new MatchHandler(dataHelper);
+    let matchHandler = new MatchHandler(dataHelper);
+    matchHandler.ChampSelectUpdate.on((async (data) => { console.log(await localApiFetchHelper.getSummonerInfoById(data ? data[0].summonerId : 0)) }));
 
     // setup and register external riot api fetcher
     let riotApiFetchHelper = await setupRiotApiFetchHelper(localApiFetchHelper);

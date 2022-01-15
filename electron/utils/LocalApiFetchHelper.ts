@@ -40,6 +40,26 @@ export default class LocalApiFetchHelper {
         )).data;
     }
 
+    public async getSummonerInfoById(summonerId: number) {
+        const apiData = await this.apiDataHelper?.apiData;
+        const apiCallUrl = (await this.buildLocalBaseUrl()) + "lol-hovercard/v1/friend-info-by-summoner/" + summonerId;
+
+        return (await axios.get(apiCallUrl,
+            {
+                headers:
+                {
+
+                },
+                httpsAgent: new https.Agent({ rejectUnauthorized: false }),
+                auth:
+                {
+                    username: "riot",
+                    password: apiData?.password ?? ''
+                }
+            }
+        )).data;
+    }
+
     public async getRegion() {
         const apiData = await this.apiDataHelper?.apiData;
         const apiCallUrl = (await this.buildLocalBaseUrl()) + "riotclient/region-locale";

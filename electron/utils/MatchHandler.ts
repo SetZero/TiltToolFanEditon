@@ -1,12 +1,15 @@
 import ApiDataHelper from './ApiDataHelper';
 import LobbyMemberManager from './lobby/LobbyMemberManager';
-import WebsocketLobbyListener from './lobby/WebsocketLobbyListener';
+import WebsocketLobbyListener, { LobbyMember } from './lobby/WebsocketLobbyListener';
 import WebSocketChampSelectListener from './champselect/WebsocketChampSelectListener';
+import LiteEvent from './events/LiteEvent';
 
 export default class MatchHandler {
     private readonly lobbyMemberManager: LobbyMemberManager;
     private readonly webSocketApiHelper: WebsocketLobbyListener;
     private readonly webSocketChampSelectListener: WebSocketChampSelectListener;
+
+    private readonly champSelectEvent = new LiteEvent<LobbyMember[]>();
 
     public constructor(dataHelper: ApiDataHelper) {
         this.webSocketApiHelper = new WebsocketLobbyListener(dataHelper);
@@ -18,5 +21,10 @@ export default class MatchHandler {
 
     private champSelectUpdateListener(data: any) {
         console.log("TeamMember: ", this.lobbyMemberManager.lobbyMember.map(e => e.summonerName));
+        this.champSelectEvent.trigger(this.lobbyMemberManager.lobbyMember);
+    }
+
+    public get ChampSelectUpdate() {
+        return this.champSelectEvent.expose();
     }
 }
