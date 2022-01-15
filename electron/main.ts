@@ -22,7 +22,7 @@ async function setupLocalApiFetchHelper(dataHelper: ApiDataHelper) {
 }
 
 async function setupRiotApiFetchHelper(localApiFetchHelper: LocalApiFetchHelper) {
-  let riotApiFetchHelper = await RiotApiFetchHelper.build(await createClientInfo(localApiFetchHelper));
+  let riotApiFetchHelper = await RiotApiFetchHelper.build(await createClientInfo(localApiFetchHelper), process.env.RIOT_API_KEY);
   registerRiotApiFetchHandler(riotApiFetchHelper);
   return riotApiFetchHelper;
 }
@@ -44,6 +44,13 @@ async function registerFetchHandler(localApiFetchHelper: LocalApiFetchHelper) {
 
 async function registerRiotApiFetchHandler(riotApiFetchHelper: RiotApiFetchHelper) {
   // riot api documentation (https://developer.riotgames.com/apis)
+
+  // api debug
+  let match_id = 'EUW1_5667715751';
+  console.log(await riotApiFetchHelper.getMatchesByPuuid(await riotApiFetchHelper.getPuuidBySummonerName("goandsteponlego")));
+  console.log(await riotApiFetchHelper.getMatchInfoByMatchId(match_id));
+
+
   ipcMain.on('custom', async (event, arg) => {
     switch (arg.cmd) {
       case 'set-region':
@@ -52,13 +59,39 @@ async function registerRiotApiFetchHandler(riotApiFetchHelper: RiotApiFetchHelpe
     }
   });
 
-  ipcMain.handle('riot-summoner', async (event, arg) => {
+  ipcMain.handle('riot/summoner', async (event, arg) => {
     switch (arg.cmd) {
-      case 'me':
-        console.log("@ipcMain.handle('riot-summoner): ", process.env.RIOT_API_KEY);
-        return riotApiFetchHelper.test(process.env.RIOT_API_KEY)
+      case 'by-account':
+        return riotApiFetchHelper.getSummonerByAccountId(arg.account_id);
+      case 'by-name':
+        return riotApiFetchHelper.getSummonerBySummonerName(arg.summoner_name);
+      case 'by-puuid':
+        return riotApiFetchHelper.getSummonerByPuuid(arg.puuid);
     }
   });
+
+  ipcMain.handle('riot/champion-mastery', async (event, arg) => {
+    switch (arg.cmd) {
+      case 'champion-mastery':
+        return riotApiFetchHelper.getChampionMasteriesBySummonerId(arg.summoner_id);
+      case 'champion-mastery/score':
+        return riotApiFetchHelper.getChampionMasteryScoresBySummonerId(arg.summoner_id);
+    }
+  });
+
+  ipcMain.handle('riot/match',async (event, arg) => {
+    switch (arg.cmd)
+    {
+      case 'by-puuid':
+        return riotApiFetchHelper.getMatchesByPuuid(arg.puuid);
+      case 'by-name':
+        return riotApiFetchHelper.getMatchesBySummonerName(arg.summoner_name);
+      case 'info':
+        return riotApiFetchHelper.getMatchInfoByMatchId(arg.match_id);
+      case 'info/participants':
+        return riotApiFetchHelper.getParticipantsByMatchId(arg.match_id)
+    }
+  })
 }
 
 
