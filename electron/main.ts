@@ -114,12 +114,12 @@ function createWindow() {
     // setup and register local api fetcher
     let localApiFetchHelper = await setupLocalApiFetchHelper(dataHelper);
 
-    // setup websocket api helper
-    let matchHandler = new MatchHandler(dataHelper);
-    matchHandler.ChampSelectUpdate.on((async (data) => { console.log(await localApiFetchHelper.getSummonerInfoById(data ? data[0].summonerId : 0)) }));
-
     // setup and register external riot api fetcher
     let riotApiFetchHelper = await setupRiotApiFetchHelper(localApiFetchHelper);
+
+    // setup Match Handler for client logic
+    let matchHandler = new MatchHandler(dataHelper, localApiFetchHelper, riotApiFetchHelper);
+    //matchHandler.ChampSelectEnter.on((async (data) => { console.log(await localApiFetchHelper.getSummonerInfoById(data ? data[0].summonerId : 0)) }));
   })()
     .catch((e) => console.log(e));
 

@@ -60,6 +60,14 @@ export default class LocalApiFetchHelper {
         )).data;
     }
 
+    public async getPuuidBySummonerId(summonerid: number) {
+        return (await this.getSummonerInfoById(summonerid)).puuid;
+    }
+
+    public async getSummonerNameBySummonerId(summonerid: number) {
+        return (await this.getSummonerInfoById(summonerid)).gameName;
+    }
+
     public async getRegion() {
         const apiData = await this.apiDataHelper?.apiData;
         const apiCallUrl = (await this.buildLocalBaseUrl()) + "riotclient/region-locale";
