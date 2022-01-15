@@ -23,3 +23,8 @@ window.addEventListener('DOMContentLoaded', () => {
         replaceText(`${dependency}-version`, process.versions[dependency]);
     }
 });
+
+ipcRenderer.on("tilttool/match/playerinfo", (event, arg) => {
+    console.log(arg);
+    document.getElementById("player-info").innerText = JSON.stringify(arg);
+});

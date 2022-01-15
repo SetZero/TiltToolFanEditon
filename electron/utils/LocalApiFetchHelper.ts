@@ -61,11 +61,11 @@ export default class LocalApiFetchHelper {
     }
 
     public async getPuuidBySummonerId(summonerid: number) {
-        return (await this.getSummonerInfoById(summonerid)).puuid;
+        return (await this.getSummonerInfoById(summonerid)).puuid as string;
     }
 
     public async getSummonerNameBySummonerId(summonerid: number) {
-        return (await this.getSummonerInfoById(summonerid)).gameName;
+        return (await this.getSummonerInfoById(summonerid)).gameName as string;
     }
 
     public async getRegion() {

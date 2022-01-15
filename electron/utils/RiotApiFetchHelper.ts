@@ -1,6 +1,143 @@
 import axios from "axios";
 import { ClientInfo, SummonerInfo } from "./structs/ClientInfo";
 
+interface MatchData {
+    metadata: MatchMetaData,
+    info: MatchInfo
+}
+
+interface MatchMetaData {
+    dataVersion: number,
+    matchId: string,
+    participants: Array<string>
+}
+
+interface MatchInfo {
+    gameCreation: number,
+    gameDuration: number,
+    gameEndTimestamp: number,
+    gameId: number,
+    gameMode: "ARAM" | "CLASSIC",
+    gameName: string,
+    gameStartTimestamp: number,
+    gameType: "MATCHED_GAME",
+    gameVersion: string,
+    mapId: number,
+    participants: Array<MatchParticipant>,
+}
+
+export interface MatchParticipant {
+    assists: number,
+    baronKills: number,
+    bountyLevel: number,
+    champExperience: number,
+    champLevel: number,
+    championId: number,
+    championName: string,
+    championTransform: number,
+    consumablesPurchased: number,
+    damageDealtToBuildings: number,
+    damageDealtToObjectives: number,
+    damageDealtToTurrets: number,
+    damageSelfMitigated: number,
+    deaths: number,
+    detectorWardsPlaced: number,
+    doubleKills: number,
+    dragonKills: number,
+    firstBloodAssist: boolean,
+    firstBloodKill: boolean,
+    firstTowerAssist: boolean,
+    firstTowerKill: boolean,
+    gameEndedInEarlySurrender: boolean,
+    gameEndedInSurrender: boolean,
+    goldEarned: number,
+    goldSpent: number,
+    individualPosition: "MIDDLE" | "TOP" | "JUNGLE" | "BOTTOM" | "UTILITY" | "Invalid",
+    inhibitorKills: number,
+    inhibitorTakedowns: number,
+    inhibitorsLost: number,
+    item0: number,
+    item1: number,
+    item2: number,
+    item3: number,
+    item4: number,
+    item5: number,
+    item6: number,
+    itemsPurchased: number,
+    killingSprees: number,
+    kills: number,
+    lane: "MIDDLE" | "TOP" | "JUNGLE" | "BOTTOM" | "UTILITY" | "Invalid",
+    largestCriticalStrike: number,
+    largestKillingSpree: number,
+    largestMultiKill: number,
+    longestTimeSpentLiving: number,
+    magicDamageDealt: number,
+    magicDamageDealtToChampions: number,
+    magicDamageTaken: number,
+    neutralMinionsKilled: number,
+    nexusKills: number,
+    nexusLost: number,
+    nexusTakedowns: number,
+    objectivesStolen: number,
+    objectivesStolenAssists: number,
+    participantId: number,
+    pentaKills: number,
+    perks: MatchPerks,
+    physicalDamageDealt: number,
+    physicalDamageDealtToChampions: number,
+    physicalDamageTaken: number,
+    profileIcon: number,
+    puuid: string,
+    quadraKills: number,
+    riotIdName: string,
+    riotIdTagline: string,
+    role: "DUO" | "DUO_CARRY" | "DUO_SUPPORT" | "SOLO" | "NONE" | "Invalid",
+    sightWardsBoughtInGame: number,
+    spell1Casts: number,
+    spell2Casts: number,
+    spell3Casts: number,
+    spell4Casts: number,
+    summoner1Casts: number,
+    summoner1Id: number,
+    summoner2Casts: number,
+    summoner2Id: number,
+    summonerId: string,
+    summonerLevel: number,
+    summonerName: string,
+    teamEarlySurrendered: boolean,
+    teamId: number,
+    teamPosition: "",
+    timeCCingOthers: number,
+    timePlayed: number,
+    totalDamageDealt: number,
+    totalDamageDealtToChampions: number,
+    totalDamageShieldedOnTeammates: number,
+    totalDamageTaken: number,
+    totalHeal: number,
+    totalHealsOnTeammates: number,
+    totalMinionsKilled: number,
+    totalTimeCCDealt: number,
+    totalTimeSpentDead: number,
+    totalUnitsHealed: number,
+    tripleKills: number,
+    trueDamageDealt: number,
+    trueDamageDealtToChampions: number,
+    trueDamageTaken: number,
+    turretKills: number,
+    turretTakedowns: number,
+    turretsLost: number,
+    unrealKills: number,
+    visionScore: number,
+    visionWardsBoughtInGame: number,
+    wardsKilled: number,
+    wardsPlaced: number,
+    win: boolean
+}
+
+interface MatchPerks {
+
+}
+
 //https://developer.riotgames.com/apis
 
 export enum Region {
@@ -47,7 +184,7 @@ export default class RiotApiFetchHelper {
     //private _riotApiDataHelper : RiotApiDataHelper = new RiotApiDataHelper();
     private _clientInfo: ClientInfo | undefined;
 
-    private constructor() {}
+    private constructor() { }
 
     public static async build(clientInfo: ClientInfo, riot_api_key: String | undefined): Promise<RiotApiFetchHelper> {
         const riotApiFetchHelper = new RiotApiFetchHelper();
@@ -66,10 +203,8 @@ export default class RiotApiFetchHelper {
         return s;
     }
 
-    private setRegionalRoute()
-    {
-        switch(this._region)
-        {
+    private setRegionalRoute() {
+        switch (this._region) {
             case Region.NA:
             case Region.BR:
             case Region.LA1:
@@ -87,7 +222,7 @@ export default class RiotApiFetchHelper {
             case Region.EUW:
             case Region.TR:
             case Region.RU:
-                this.regionalRoute = RegionalRoute.EUROPE    
+                this.regionalRoute = RegionalRoute.EUROPE
                 break;
 
             default:
@@ -99,9 +234,8 @@ export default class RiotApiFetchHelper {
         return "https://" + this.region;
     }
 
-    private buildRegionalRouteBaseUrl()
-    {
-        return "https://" + this.regionalRoute; 
+    private buildRegionalRouteBaseUrl() {
+        return "https://" + this.regionalRoute;
     }
 
     public async getChampionInfo() {
@@ -122,47 +256,49 @@ export default class RiotApiFetchHelper {
     }
 
     /* match */
-    public async getMatchesByPuuid(puuid: String)
-    {
+    public async getMatchesByPuuid(puuid: String) {
         const apiCallUrl = this.buildRegionalRouteBaseUrl() + "/lol/match/v5/matches/by-puuid/" + puuid + "/ids?api_key=" + this._api_key;
         return (await axios.get(apiCallUrl, {})).data;
     }
 
-    public async getMatchInfoByMatchId(match_id: String)
-    {
+    public async getMatchInfoByMatchId(match_id: String) {
         const apiCallUrl = this.buildRegionalRouteBaseUrl() + "/lol/match/v5/matches/" + match_id + "?api_key=" + this._api_key;
         return (await axios.get(apiCallUrl, {})).data;
     }
 
+    public async getAllMatchInfoBySummonerName(summoner_name: String) {
+        const match_ids = await this.getMatchesBySummonerName(summoner_name);
+        const match_info = new Array<any>();
+        for (const match_id of match_ids) {
+            match_info.push(await this.getMatchInfoByMatchId(match_id));
+        }
+        return match_info as MatchData[];
+    }
+
     /* summoner */
-    public async getSummonerByAccountId(account_id: String)
-    {
+    public async getSummonerByAccountId(account_id: String) {
         const apiCallUrl = this.buildRiotBaseUrl() + "/lol/summoner/v4/summoners/by-account/" + account_id + "?api_key=" + this._api_key;
         return (await axios.get(apiCallUrl, {})).data;
     }
 
-    public async getSummonerBySummonerName(summoner_name: String)
-    {
+    public async getSummonerBySummonerName(summoner_name: String) {
         const apiCallUrl = this.buildRiotBaseUrl() + "/lol/summoner/v4/summoners/by-name/" + summoner_name + "?api_key=" + this._api_key;
         return (await axios.get(apiCallUrl, {})).data;
     }
 
-    public async getSummonerByPuuid(puuid: String)
-    {
+    public async getSummonerByPuuid(puuid: String) {
         const apiCallUrl = this.buildRiotBaseUrl() + "/lol/summoner/v4/summoners/by-puuid/" + puuid + "?api_key=" + this._api_key;
         console.log(apiCallUrl);
         return (await axios.get(apiCallUrl, {})).data;
     }
 
     /* champion-masteries */
-    public async getChampionMasteriesBySummonerId(summoner_id: String)
-    {
+    public async getChampionMasteriesBySummonerId(summoner_id: String) {
         const apiCallUrl = this.buildRiotBaseUrl() + "/lol/champion-mastery/v4/champion-masteries/by-summoner/" + summoner_id + "?api_key=" + this._api_key;
         return (await axios.get(apiCallUrl, {})).data;
     }
 
-    public async getChampionMasteryScoresBySummonerId(summoner_id: String)
-    {
+    public async getChampionMasteryScoresBySummonerId(summoner_id: String) {
         const apiCallUrl = this.buildRiotBaseUrl() + " /lol/champion-mastery/v4/scores/by-summoner/ " + summoner_id + "?api_key=" + this._api_key;
         return (await axios.get(apiCallUrl, {})).data;
 
@@ -181,24 +317,20 @@ export default class RiotApiFetchHelper {
         return (await this.getSummonerBySummonerName(summoner_name)).accountId;
     }
 
-    public async getChampionMasteriesBySummonerName(summoner_name: String)
-    {
+    public async getChampionMasteriesBySummonerName(summoner_name: String) {
         return (await this.getChampionMasteriesBySummonerId(await this.getSummonerIdBySummonerName(summoner_name)));
     }
 
-    public async getChampionMasteryScoresBySummonerName(summoner_name: String)
-    {
+    public async getChampionMasteryScoresBySummonerName(summoner_name: String) {
         return (await this.getChampionMasteryScoresBySummonerId(await this.getSummonerIdBySummonerName(summoner_name)));
     }
 
-    public async getMatchesBySummonerName(summoner_name: String)
-    {
+    public async getMatchesBySummonerName(summoner_name: String) {
         return (await this.getMatchesByPuuid(await this.getPuuidBySummonerName(summoner_name)));
     }
 
-    public async getParticipantsByMatchId(match_id: String)
-    {
+    public async getParticipantsByMatchId(match_id: String) {
         // todo
     }
-    
+
 }
