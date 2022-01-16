@@ -75,7 +75,7 @@ class MainApp extends React.Component {
           <Card key={key}>
             <CardMedia
               component="img"
-              height="140"
+              height="30"
               image="https://ddragon.leagueoflegends.com/cdn/img/champion/loading/Lulu_3.jpg"
               alt="green iguana"
             />
@@ -91,7 +91,7 @@ class MainApp extends React.Component {
                 </AccordionSummary>
                 <AccordionDetails>
                   <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                    <Table aria-label="customized table">
                       <TableHead>
                         <TableRow>
                           <StyledTableCell>Champion</StyledTableCell>
@@ -113,9 +113,6 @@ class MainApp extends React.Component {
                 </AccordionDetails>
               </Accordion>
             </CardContent>
-            <CardActions>
-              <Button size="small" color="error" variant="contained">Ban Champion</Button>
-            </CardActions>
           </Card>))}
       </Container>);
   }
