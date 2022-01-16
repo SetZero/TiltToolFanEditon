@@ -25,6 +25,5 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 ipcRenderer.on("tilttool/match/playerinfo", (event, arg) => {
-    console.log(arg);
-    document.getElementById("player-info").innerText = JSON.stringify(arg);
+    document.dispatchEvent(new CustomEvent("tilttool/match/playerinfo", { detail: arg }));
 });

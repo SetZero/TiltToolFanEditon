@@ -5,6 +5,8 @@ import {HashRouter, Routes, Route, Navigate} from "react-router-dom";
 
 export default function RoutingApp()
 {
+    window.ipcRenderer.send('mainWindowReady', {ready: true});
+
     return(
         <HashRouter forceRefresh={true}>
             <Routes>
