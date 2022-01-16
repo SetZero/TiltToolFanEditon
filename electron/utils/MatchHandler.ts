@@ -38,6 +38,8 @@ export default class MatchHandler {
                 console.log(e.summonerName, " <=> ", summoner);
             });
         });
+        let matchData = new Map<string, MatchParticipant[]>();
+        let teamSize = data.myTeam.length;
 
         data.myTeam.forEach(e => {
             let summonerName = "";
@@ -49,7 +51,18 @@ export default class MatchHandler {
                         p.summonerName === summonerName
                     )
                 ))
-                .then(m => m.every(x => x !== undefined) ? this.ipcMatchHandler.sendPlayerMatchData(m as MatchParticipant[]) : null);
+                .then(m => m.every(x => x !== undefined) ? matchData.set(m[0]?.summonerName ?? "UNDEFINED", m as MatchParticipant[]) : null)
+                .then(() => {
+                    teamSize = teamSize - 1
+                    if (teamSize === 0) {
+                        let obj = Array.from(matchData.entries()).reduce((obj, [key, value]) => {
+                            //@ts-ignore
+                            obj[key] = value;
+                            return obj;
+                          }, {});
+                        this.ipcMatchHandler.sendPlayerMatchData(obj);
+                    }
+                });
         });
     }
 

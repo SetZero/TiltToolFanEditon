@@ -8,6 +8,17 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import Typography from '@mui/material/Typography';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
 
 // LCU api documentation: https://lcu.vivide.re/
 
@@ -39,43 +50,78 @@ const StyledTableRow = styled(TableRow, {
 class MainApp extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { playerInfo: [] };
+    this.state = { playerInfo: {} };
 
-    document.addEventListener("tilttool/match/playerinfo", (e) => {
+
+  }
+
+  componentDidMount() {
+    this.listener = (e) => {
       let data = e.detail;
       this.setState(state => ({ playerInfo: data }));
-    });
+    };
+
+    document.addEventListener("tilttool/match/playerinfo", this.listener);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("tilttool/match/playerinfo", this.listener);
   }
 
   summonerInfoTable() {
-    return (<TableContainer component={Paper}>
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>Name</StyledTableCell>
-            <StyledTableCell align="right">Champion</StyledTableCell>
-            <StyledTableCell align="right">KDA</StyledTableCell>
-            <StyledTableCell align="right">Position</StyledTableCell>
-            <StyledTableCell align="right">Win</StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {this.state.playerInfo.map((row) => (
-            <StyledTableRow key={row.name} win={row.win}>
-              <StyledTableCell component="th" scope="row">{row.summonerName}</StyledTableCell>
-              <StyledTableCell align="right">{row.championName}</StyledTableCell>
-              <StyledTableCell align="right">{row.kills} - {row.deaths} - {row.assists}</StyledTableCell>
-              <StyledTableCell align="right">{row.teamPosition}</StyledTableCell>
-              <StyledTableCell align="right">{row.win}</StyledTableCell>
-            </StyledTableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>);
+    return (
+      <Container maxWidth="sm">
+        {Object.entries(this.state.playerInfo).map(([key, value]) => (
+          <Card key={key}>
+            <CardMedia
+              component="img"
+              height="140"
+              image="https://ddragon.leagueoflegends.com/cdn/img/champion/loading/Lulu_3.jpg"
+              alt="green iguana"
+            />
+            <CardContent>
+              <Typography gutterBottom variant="h5" component="div">{key}</Typography>
+              <Accordion>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Typography>Last Matches</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <TableContainer component={Paper}>
+                    <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                      <TableHead>
+                        <TableRow>
+                          <StyledTableCell>Champion</StyledTableCell>
+                          <StyledTableCell align="right">KDA</StyledTableCell>
+                          <StyledTableCell align="right">Position</StyledTableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {value.map((row, index) => (
+                          <StyledTableRow key={index} win={row.win}>
+                            <StyledTableCell align="right">{row.championName}</StyledTableCell>
+                            <StyledTableCell align="right">{row.kills} - {row.deaths} - {row.assists}</StyledTableCell>
+                            <StyledTableCell align="right">{row.teamPosition}</StyledTableCell>
+                          </StyledTableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </AccordionDetails>
+              </Accordion>
+            </CardContent>
+            <CardActions>
+              <Button size="small" color="error" variant="contained">Ban Champion</Button>
+            </CardActions>
+          </Card>))}
+      </Container>);
   }
 
   render() {
-    let matchTable = this.state.playerInfo.length > 0 ? this.summonerInfoTable() : <div>Wating for match to start...</div>;
+    let matchTable = Object.keys(this.state.playerInfo).length > 0 ? this.summonerInfoTable() : <div>Wating for match to start...</div>;
 
     return (
       <div className="MainApp">

@@ -13,7 +13,7 @@ export default class IpcMatchHandler {
         });
     }
 
-    public sendPlayerMatchData(playerInfo: Array<MatchParticipant>) {
+    public sendPlayerMatchData(playerInfo: {}) {
         if(this.sender === undefined) {
             console.log("Sender is undefined, dropping message");
             return
