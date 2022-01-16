@@ -120,10 +120,14 @@ class MainApp extends React.Component {
   render() {
     let matchTable = Object.keys(this.state.playerInfo).length > 0 ? this.summonerInfoTable() : <div>Wating for match to start...</div>;
 
+    const mystyle = {
+      WebkitAppRegion: "drag",
+    };
+
     return (
       <div className="MainApp">
         <header className="MainApp-header">
-          <h1>Main Application</h1>
+          <h1 style={mystyle}>Tilt Tool</h1>
           {matchTable}
         </header>
       </div>

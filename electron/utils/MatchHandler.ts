@@ -6,6 +6,7 @@ import LiteEvent from './events/LiteEvent';
 import LocalApiFetchHelper from './LocalApiFetchHelper';
 import RiotApiFetchHelper, { MatchParticipant } from './RiotApiFetchHelper';
 import IpcMatchHandler from './IpcMatchHandler';
+import {sleep} from './utility';
 
 export default class MatchHandler {
     private readonly lobbyMemberManager: LobbyMemberManager;
@@ -28,7 +29,7 @@ export default class MatchHandler {
         this.webSocketChampSelectListener.ChampSelectEnter.on((data) => this.champSelectEnterListener(data));
     }
 
-    private champSelectEnterListener(data: ChampSelect | undefined) {
+    private async champSelectEnterListener(data: ChampSelect | undefined) {
         if (data === undefined) return;
 
         this.champSelectEvent.trigger(this.lobbyMemberManager.lobbyMember);
@@ -41,7 +42,7 @@ export default class MatchHandler {
         let matchData = new Map<string, MatchParticipant[]>();
         let teamSize = data.myTeam.length;
 
-        data.myTeam.forEach(e => {
+        data.myTeam.forEach(async e => {
             let summonerName = "";
             this.localApiFetchHelper.getSummonerNameBySummonerId(e.summonerId)
                 .then(s => summonerName = s)
@@ -59,10 +60,13 @@ export default class MatchHandler {
                             //@ts-ignore
                             obj[key] = value;
                             return obj;
-                          }, {});
+                        }, {});
                         this.ipcMatchHandler.sendPlayerMatchData(obj);
                     }
-                });
+                })
+                .catch(e => {});
+
+            await sleep(1040);
         });
     }
 

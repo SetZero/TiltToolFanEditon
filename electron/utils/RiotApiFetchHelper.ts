@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ClientInfo, SummonerInfo } from "./structs/ClientInfo";
+import { sleep } from "./utility";
 
 interface MatchData {
     metadata: MatchMetaData,
@@ -268,9 +269,17 @@ export default class RiotApiFetchHelper {
 
     public async getAllMatchInfoBySummonerName(summoner_name: String) {
         const match_ids = await this.getMatchesBySummonerName(summoner_name);
+        console.log(summoner_name, match_ids)
         const match_info = new Array<any>();
-        for (const match_id of match_ids) {
-            match_info.push(await this.getMatchInfoByMatchId(match_id));
+        for (const [i, match_id] of match_ids) {
+            try {
+                match_info.push(await this.getMatchInfoByMatchId(match_id));
+            } catch (error) {
+                console.log("Can't get match info for match id: " + match_id);
+            }
+            if (i % 10 === 0) {
+                await sleep(1040);
+            }
         }
         return match_info as MatchData[];
     }

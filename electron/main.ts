@@ -6,6 +6,7 @@ import { ClientInfo } from './utils/structs/ClientInfo';
 import WebsocketLobbyListener from './utils/lobby/WebsocketLobbyListener';
 import LobbyMemberManager from './utils/lobby/LobbyMemberManager';
 import MatchHandler from './utils/MatchHandler';
+import process from 'process';
 
 const { app, BrowserWindow, ipcMain } = require('electron');
 const dotenv = require('dotenv').config({ path: "electron.env" });
@@ -92,9 +93,14 @@ async function registerRiotApiFetchHandler(riotApiFetchHelper: RiotApiFetchHelpe
     }
   })
 }
-
-
 function createWindow() {
+
+  //@ts-ignore
+  process.on('unhandledRejection', (reason: {stack: any}, p) => {
+    // console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+    // application specific logging, throwing an error, or other logic here
+    // console.log(reason?.stack);
+  });
 
 
   (async () => {

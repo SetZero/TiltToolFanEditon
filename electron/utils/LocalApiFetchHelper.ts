@@ -65,7 +65,7 @@ export default class LocalApiFetchHelper {
     }
 
     public async getSummonerNameBySummonerId(summonerid: number) {
-        return (await this.getSummonerInfoById(summonerid)).gameName as string;
+        return (await this.getSummonerInfoById(summonerid)).name as string;
     }
 
     public async getRegion() {
