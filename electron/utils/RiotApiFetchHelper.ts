@@ -269,13 +269,13 @@ export default class RiotApiFetchHelper {
 
     public async getAllMatchInfoBySummonerName(summoner_name: String) {
         const match_ids = await this.getMatchesBySummonerName(summoner_name);
-        console.log(summoner_name, match_ids)
         const match_info = new Array<any>();
-        for (const [i, match_id] of match_ids) {
+        for (var i = match_ids.length - 1; i >= 0; i--) {
+            console.log(i, match_ids[i]);
             try {
-                match_info.push(await this.getMatchInfoByMatchId(match_id));
+                match_info.push(await this.getMatchInfoByMatchId(match_ids[i]));
             } catch (error) {
-                console.log("Can't get match info for match id: " + match_id);
+                console.log("Can't get match info for match id: " + match_ids[i]);
             }
             if (i % 10 === 0) {
                 await sleep(1040);

@@ -58,6 +58,7 @@ class MainApp extends React.Component {
   componentDidMount() {
     this.listener = (e) => {
       let data = e.detail;
+      console.log(data);
       this.setState(state => ({ playerInfo: data }));
     };
 
