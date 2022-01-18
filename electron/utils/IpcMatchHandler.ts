@@ -21,4 +21,13 @@ export default class IpcMatchHandler {
         console.log("sending player match data");
         this.sender.send('tilttool/match/playerinfo', playerInfo);
     }
+
+    public sendQuitChampSelectEvent() {
+        if(this.sender === undefined) {
+            console.log("Sender is undefined, dropping message");
+            return
+        }
+        console.log("sending quit champ select event");
+        this.sender.send('tilttool/match/quitchampselect');
+    }
 }

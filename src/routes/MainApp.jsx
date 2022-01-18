@@ -56,17 +56,23 @@ class MainApp extends React.Component {
   }
 
   componentDidMount() {
-    this.listener = (e) => {
+    this.champSelectListener = (e) => {
       let data = e.detail;
       console.log(data);
       this.setState(state => ({ playerInfo: data }));
     };
 
-    document.addEventListener("tilttool/match/playerinfo", this.listener);
+    this.champSelectQuitListener = (e) => {
+      this.setState(state => ({ playerInfo: {} }));
+    };
+
+    document.addEventListener("tilttool/match/playerinfo", this.champSelectListener);
+    document.addEventListener("tilttool/match/quitchampselect", this.champSelectQuitListener);
   }
 
   componentWillUnmount() {
-    document.removeEventListener("tilttool/match/playerinfo", this.listener);
+    document.removeEventListener("tilttool/match/playerinfo", this.champSelectListener);
+    document.removeEventListener("tilttool/match/quitchampselect", this.champSelectQuitListener);
   }
 
   summonerInfoTable() {

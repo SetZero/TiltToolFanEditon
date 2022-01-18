@@ -27,6 +27,7 @@ export default class MatchHandler {
         this.localApiFetchHelper = localApiFetchHelper;
 
         this.webSocketChampSelectListener.ChampSelectEnter.on((data) => this.champSelectEnterListener(data));
+        this.webSocketChampSelectListener.ChampSelectQuit.on((data) => this.champSelectQuitListener());
     }
 
     private async champSelectEnterListener(data: ChampSelect | undefined) {
@@ -68,6 +69,10 @@ export default class MatchHandler {
 
             await sleep(1040);
         });
+    }
+
+    private champSelectQuitListener() {
+        this.ipcMatchHandler.sendQuitChampSelectEvent();
     }
 
     public get ChampSelectEnter() {

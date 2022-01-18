@@ -27,3 +27,7 @@ window.addEventListener('DOMContentLoaded', () => {
 ipcRenderer.on("tilttool/match/playerinfo", (event, arg) => {
     document.dispatchEvent(new CustomEvent("tilttool/match/playerinfo", { detail: arg }));
 });
+
+ipcRenderer.on("tilttool/match/quitchampselect", (event, arg) => {
+    document.dispatchEvent(new CustomEvent("tilttool/match/quitchampselect", { detail: undefined }));
+});
