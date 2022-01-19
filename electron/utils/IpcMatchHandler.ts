@@ -13,6 +13,15 @@ export default class IpcMatchHandler {
         });
     }
 
+    public sendStartFetchEvent() {
+        if(this.sender === undefined) {
+            console.log("Sender is undefined, dropping message");
+            return
+        }
+        console.log("sending start fetch event");
+        this.sender.send('tilttool/match/startfetch');
+    }
+
     public sendPlayerMatchData(playerInfo: {}) {
         if(this.sender === undefined) {
             console.log("Sender is undefined, dropping message");

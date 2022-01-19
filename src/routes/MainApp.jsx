@@ -19,6 +19,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
+import CircularProgress from '@mui/material/CircularProgress';
 
 // LCU api documentation: https://lcu.vivide.re/
 
@@ -50,7 +51,7 @@ const StyledTableRow = styled(TableRow, {
 class MainApp extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { playerInfo: {} };
+    this.state = { playerInfo: {}, startfetch: false };
 
 
   }
@@ -59,20 +60,26 @@ class MainApp extends React.Component {
     this.champSelectListener = (e) => {
       let data = e.detail;
       console.log(data);
-      this.setState(state => ({ playerInfo: data }));
+      this.setState(state => ({ playerInfo: data, startfetch: false }));
     };
 
     this.champSelectQuitListener = (e) => {
-      this.setState(state => ({ playerInfo: {} }));
+      this.setState(state => ({ playerInfo: {}, startfetch: false }));
+    };
+
+    this.startFetchListener = (e) => {
+      this.setState(state => ({ startfetch: true }));
     };
 
     document.addEventListener("tilttool/match/playerinfo", this.champSelectListener);
     document.addEventListener("tilttool/match/quitchampselect", this.champSelectQuitListener);
+    document.addEventListener("tilttool/match/startfetch", this.startFetchListener);
   }
 
   componentWillUnmount() {
     document.removeEventListener("tilttool/match/playerinfo", this.champSelectListener);
     document.removeEventListener("tilttool/match/quitchampselect", this.champSelectQuitListener);
+    document.removeEventListener("tilttool/match/startfetch", this.startFetchListener);
   }
 
   summonerInfoTable() {
@@ -125,7 +132,15 @@ class MainApp extends React.Component {
   }
 
   render() {
-    let matchTable = Object.keys(this.state.playerInfo).length > 0 ? this.summonerInfoTable() : <div>Wating for match to start...</div>;
+    let matchTable = Object.keys(this.state.playerInfo).length > 0 && !this.state.startfetch ? this.summonerInfoTable() : <div>Wating for match to start...</div>;
+    let loadingInfo = this.state.startfetch ? (
+      <div>
+        <CircularProgress color="inherit" />
+        <Typography variant="body2" color="textSecondary" component="p">
+          Match started, fetching match data...
+        </Typography>
+      </div>
+    ) : null;
 
     const mystyle = {
       WebkitAppRegion: "drag",
@@ -135,6 +150,7 @@ class MainApp extends React.Component {
       <div className="MainApp">
         <header className="MainApp-header">
           <h1 style={mystyle}>Tilt Tool</h1>
+          {loadingInfo}
           {matchTable}
         </header>
       </div>

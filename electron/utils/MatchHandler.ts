@@ -32,6 +32,7 @@ export default class MatchHandler {
 
     private async champSelectEnterListener(data: ChampSelect | undefined) {
         if (data === undefined) return;
+        this.ipcMatchHandler.sendStartFetchEvent();
 
         this.champSelectEvent.trigger(this.lobbyMemberManager.lobbyMember);
 
@@ -65,7 +66,9 @@ export default class MatchHandler {
                         this.ipcMatchHandler.sendPlayerMatchData(obj);
                     }
                 })
-                .catch(e => {});
+                .catch(e => {
+                    console.log(e);
+                });
 
             await sleep(1040);
         });
