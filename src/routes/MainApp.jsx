@@ -19,7 +19,7 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
-import CircularProgress from '@mui/material/CircularProgress';
+import LinearProgress from '@mui/material/LinearProgress';
 
 // LCU api documentation: https://lcu.vivide.re/
 
@@ -132,11 +132,14 @@ class MainApp extends React.Component {
   }
 
   render() {
-    let matchTable = Object.keys(this.state.playerInfo).length > 0 && !this.state.startfetch ? this.summonerInfoTable() : <div>Wating for match to start...</div>;
+    let matchTable = Object.keys(this.state.playerInfo).length > 0 && !this.state.startfetch
+      ? this.summonerInfoTable()
+      : <Typography color="textPrimary">Wating for match to start...</Typography>;
+
     let loadingInfo = this.state.startfetch ? (
       <div>
-        <CircularProgress color="inherit" />
-        <Typography variant="body2" color="textSecondary" component="p">
+        <LinearProgress color="primary" />
+        <Typography variant="body2" color="textPrimary" component="p">
           Match started, fetching match data...
         </Typography>
       </div>
@@ -144,12 +147,13 @@ class MainApp extends React.Component {
 
     const mystyle = {
       WebkitAppRegion: "drag",
+      textAlign: "center",
     };
 
     return (
       <div className="MainApp">
         <header className="MainApp-header">
-          <h1 style={mystyle}>Tilt Tool</h1>
+          <Typography variant="h3" style={mystyle} color="textPrimary">Tilt Tool</Typography>
           {loadingInfo}
           {matchTable}
         </header>
