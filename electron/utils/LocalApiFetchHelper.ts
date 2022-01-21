@@ -6,13 +6,8 @@ export default class LocalApiFetchHelper {
     // https://lcu.vivide.re/
     private apiDataHelper: ApiDataHelper | undefined;
 
-    private constructor() { }
-
-    public static async build(): Promise<LocalApiFetchHelper> {
-        const apiFetchHelper = new LocalApiFetchHelper();
-        return ApiDataHelper.build()
-            .then((e) => apiFetchHelper.apiDataHelper = e)
-            .then(() => apiFetchHelper);
+    public constructor(dataHelper: ApiDataHelper) {
+        this.apiDataHelper = dataHelper;
     }
 
     private async buildLocalBaseUrl() {
@@ -43,6 +38,34 @@ export default class LocalApiFetchHelper {
                 }
             }
         )).data;
+    }
+
+    public async getSummonerInfoById(summonerId: number) {
+        const apiData = await this.apiDataHelper?.apiData;
+        const apiCallUrl = (await this.buildLocalBaseUrl()) + "lol-hovercard/v1/friend-info-by-summoner/" + summonerId;
+
+        return (await axios.get(apiCallUrl,
+            {
+                headers:
+                {
+
+                },
+                httpsAgent: new https.Agent({ rejectUnauthorized: false }),
+                auth:
+                {
+                    username: "riot",
+                    password: apiData?.password ?? ''
+                }
+            }
+        )).data;
+    }
+
+    public async getPuuidBySummonerId(summonerid: number) {
+        return (await this.getSummonerInfoById(summonerid)).puuid as string;
+    }
+
+    public async getSummonerNameBySummonerId(summonerid: number) {
+        return (await this.getSummonerInfoById(summonerid)).name as string;
     }
 
     public async getRegion() {

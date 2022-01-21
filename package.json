@@ -7,12 +7,14 @@
   "dependencies": {
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
+    "@mui/icons-material": "^5.2.5",
     "@mui/material": "^5.2.6",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.0.0",
     "@testing-library/user-event": "^13.2.1",
     "@types/react": "^17.0.38",
     "@types/react-dom": "^17.0.11",
+    "@types/ws": "^8.2.2",
     "axios": "^0.24.0",
     "dotenv": "^10.0.0",
     "react": "^17.0.2",
@@ -20,10 +22,11 @@
     "react-router": "^6.2.1",
     "react-router-dom": "^6.2.1",
     "react-scripts": "5.0.0",
-    "web-vitals": "^2.1.0"
+    "web-vitals": "^2.1.0",
+    "ws": "^8.4.0"
   },
   "scripts": {
-    "start-windows": "set \"NODE_ENV=development\" && tsc && START \"\" react-scripts start && electron .",
+    "start-windows": "set \"NODE_ENV=development\" && tsc && START \"\" react-scripts start && electron --trace-warnings .",
     "start": "yarn start-windows",
     "build": "set \"NODE_ENV=production\" && tsc && react-scripts build && electron .",
     "test": "react-scripts test",

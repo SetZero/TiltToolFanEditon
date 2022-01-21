@@ -23,3 +23,15 @@ window.addEventListener('DOMContentLoaded', () => {
         replaceText(`${dependency}-version`, process.versions[dependency]);
     }
 });
+
+ipcRenderer.on("tilttool/match/playerinfo", (event, arg) => {
+    document.dispatchEvent(new CustomEvent("tilttool/match/playerinfo", { detail: arg }));
+});
+
+ipcRenderer.on("tilttool/match/quitchampselect", (event, arg) => {
+    document.dispatchEvent(new CustomEvent("tilttool/match/quitchampselect", { detail: undefined }));
+});
+
+ipcRenderer.on("tilttool/match/startfetch", (event, arg) => {
+    document.dispatchEvent(new CustomEvent("tilttool/match/startfetch", { detail: undefined }));
+});
