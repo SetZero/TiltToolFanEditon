@@ -21,7 +21,11 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import LinearProgress from '@mui/material/LinearProgress';
 
+import { Box, CircularProgress } from '@mui/material';
+
 import {PlayerDataProcessUtil} from '../utils/PlayerDataProcessUtil';
+
+import { PlayerStatsCard, PlayerStatsIcon} from '../utils/MUIUtils';
 
 // LCU api documentation: https://lcu.vivide.re/
 
@@ -84,6 +88,8 @@ class MainApp extends React.Component {
     document.removeEventListener("tilttool/match/startfetch", this.startFetchListener);
   }
 
+  CircularProgressWithContent
+
   summonerInfoTable() {
     // debug
     console.log(this.state.playerInfo);
@@ -97,8 +103,40 @@ class MainApp extends React.Component {
               image={"https://ddragon.leagueoflegends.com/cdn/img/champion/loading/" + this.playerDataProcessUtil.getChampionName(this.state.playerInfo, key)  + "_0.jpg"} 
               alt={this.playerDataProcessUtil.getChampionName(this.state.playerInfo, key)}
             />
+            
             <CardContent>
-              <Typography gutterBottom variant="h5" component="div">{key}</Typography>
+              <Typography gutterBottom variant="h5" component="div" >{key}</Typography>
+
+              {/*<PlayerStatsCard 
+                championWinrate={43}  
+                championImageSrc={this.playerDataProcessUtil.getChampionImageByChampionId(this.playerDataProcessUtil.getChampionName(this.state.playerInfo, key))} 
+                championName={this.playerDataProcessUtil.getChampionName(this.state.playerInfo, key)}
+              />
+              <PlayerStatsCard 
+                championWinrate={43}  
+                championImageSrc={this.playerDataProcessUtil.getChampionImageByChampionId(this.playerDataProcessUtil.getChampionName(this.state.playerInfo, key))} 
+                championName={this.playerDataProcessUtil.getChampionName(this.state.playerInfo, key)}
+              />*/}
+
+              
+              <PlayerStatsIcon
+                championWinrate={42}  
+                championImageSrc={this.playerDataProcessUtil.getChampionImageByChampionId(this.playerDataProcessUtil.getChampionName(this.state.playerInfo, key))} 
+                championName={this.playerDataProcessUtil.getChampionName(this.state.playerInfo, key)}
+              />
+               <PlayerStatsIcon
+                championWinrate={42}  
+                championImageSrc={this.playerDataProcessUtil.getChampionImageByChampionId(this.playerDataProcessUtil.getChampionName(this.state.playerInfo, key))} 
+                championName={this.playerDataProcessUtil.getChampionName(this.state.playerInfo, key)}
+              />
+               <PlayerStatsIcon
+                championWinrate={42}  
+                championImageSrc={this.playerDataProcessUtil.getChampionImageByChampionId(this.playerDataProcessUtil.getChampionName(this.state.playerInfo, key))} 
+                championName={this.playerDataProcessUtil.getChampionName(this.state.playerInfo, key)}
+              />
+
+
+
               <Accordion>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}

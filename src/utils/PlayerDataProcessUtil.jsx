@@ -26,6 +26,8 @@ export class PlayerDataProcessUtil
 
     */
 
+    
+
     processPlayerData(playerinfo)
     {
 
@@ -53,6 +55,11 @@ export class PlayerDataProcessUtil
             console.log(match);
             recentChampList.push(match["championName"]);
         });
+    }
+
+    getChampionImageByChampionId(championid)
+    {
+        return("https://ddragon.leagueoflegends.com/cdn/img/champion/loading/" + championid + "_0.jpg")
     }
 
     test(playerinfo, playername)
