@@ -21,6 +21,8 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import LinearProgress from '@mui/material/LinearProgress';
 
+import {PlayerDataProcessUtil} from '../utils/PlayerDataProcessUtil';
+
 // LCU api documentation: https://lcu.vivide.re/
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -53,7 +55,7 @@ class MainApp extends React.Component {
     super(props);
     this.state = { playerInfo: {}, startfetch: false };
 
-
+    this.playerDataProcessUtil = new PlayerDataProcessUtil();
   }
 
   componentDidMount() {
@@ -83,6 +85,8 @@ class MainApp extends React.Component {
   }
 
   summonerInfoTable() {
+    // debug
+    console.log(this.state.playerInfo);
     return (
       <Container maxWidth="sm">
         {Object.entries(this.state.playerInfo).map(([key, value]) => (
@@ -90,8 +94,8 @@ class MainApp extends React.Component {
             <CardMedia
               component="img"
               height="30"
-              image="https://ddragon.leagueoflegends.com/cdn/img/champion/loading/Lulu_3.jpg"
-              alt="green iguana"
+              image={"https://ddragon.leagueoflegends.com/cdn/img/champion/loading/" + this.playerDataProcessUtil.getChampionName(this.state.playerInfo, key)  + "_0.jpg"} 
+              alt={this.playerDataProcessUtil.getChampionName(this.state.playerInfo, key)}
             />
             <CardContent>
               <Typography gutterBottom variant="h5" component="div">{key}</Typography>
