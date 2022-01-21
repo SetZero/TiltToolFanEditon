@@ -7,6 +7,7 @@ import WebsocketLobbyListener from './utils/lobby/WebsocketLobbyListener';
 import LobbyMemberManager from './utils/lobby/LobbyMemberManager';
 import MatchHandler from './utils/MatchHandler';
 import process from 'process';
+import DataDragonHelper from './static/DataDragonHelper';
 
 const { app, BrowserWindow, ipcMain } = require('electron');
 const dotenv = require('dotenv').config({ path: "electron.env" });
@@ -115,12 +116,13 @@ function createWindow() {
 
     // setup Match Handler for client logic
     let matchHandler = new MatchHandler(dataHelper, localApiFetchHelper, riotApiFetchHelper);
-    //matchHandler.ChampSelectEnter.on((async (data) => { console.log(await localApiFetchHelper.getSummonerInfoById(data ? data[0].summonerId : 0)) }));
+
+    let ddHelper = DataDragonHelper.init();
   })()
     .then(() => {
       // Create the browser window.
       const mainWindow = new BrowserWindow({
-        width: 800,
+        width: 400,
         height: 600,
         frame: false,
         transparent: true,
