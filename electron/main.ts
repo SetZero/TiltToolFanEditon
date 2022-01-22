@@ -117,7 +117,7 @@ function createWindow() {
     // setup Match Handler for client logic
     let matchHandler = new MatchHandler(dataHelper, localApiFetchHelper, riotApiFetchHelper);
 
-    let ddHelper = DataDragonHelper.init();
+    let ddHelper = await DataDragonHelper.init();
   })()
     .then(() => {
       // Create the browser window.
