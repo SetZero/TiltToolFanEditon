@@ -88,8 +88,6 @@ class MainApp extends React.Component {
     document.removeEventListener("tilttool/match/startfetch", this.startFetchListener);
   }
 
-  CircularProgressWithContent
-
   summonerInfoTable() {
     // debug
     console.log(this.state.playerInfo);
