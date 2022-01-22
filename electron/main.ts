@@ -8,10 +8,14 @@ import LobbyMemberManager from './utils/lobby/LobbyMemberManager';
 import MatchHandler from './utils/MatchHandler';
 import process from 'process';
 import DataDragonHelper from './static/DataDragonHelper';
+import StaticDataProtocol from './static/StaticDataProtocol';
+import { protocol } from 'electron';
 
 const { app, BrowserWindow, ipcMain } = require('electron');
 const dotenv = require('dotenv').config({ path: "electron.env" });
 const path = require('path');
+
+protocol.registerSchemesAsPrivileged([{scheme: "datadragon", privileges: {standard: true, secure: true, supportFetchAPI: true}}]);
 
 async function setupDataHelper(): Promise<ApiDataHelper> {
   return ApiDataHelper.build();
@@ -118,6 +122,7 @@ function createWindow() {
     let matchHandler = new MatchHandler(dataHelper, localApiFetchHelper, riotApiFetchHelper);
 
     let ddHelper = await DataDragonHelper.init();
+    StaticDataProtocol.registerStaticDataProtocol();
   })()
     .then(() => {
       // Create the browser window.
