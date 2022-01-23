@@ -59,7 +59,7 @@ export class PlayerDataProcessUtil
 
     getChampionImageByChampionId(championid)
     {
-        return("datadragon://getmediafile/img/champion/loading/" + championid + "_0.jpg");
+        return("datadragon://getmediafile/data/img/champion/loading/" + championid + "_0.jpg");
     }
 
     test(playerinfo, playername)
