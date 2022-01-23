@@ -6,7 +6,7 @@ import LiteEvent from './events/LiteEvent';
 import LocalApiFetchHelper from './LocalApiFetchHelper';
 import RiotApiFetchHelper, { MatchParticipant } from './RiotApiFetchHelper';
 import IpcMatchHandler from './IpcMatchHandler';
-import {sleep} from './utility';
+import { sleep } from './utility';
 
 export default class MatchHandler {
     private readonly lobbyMemberManager: LobbyMemberManager;

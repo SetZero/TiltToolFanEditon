@@ -22,7 +22,7 @@ export default class IpcMatchHandler {
         this.sender.send('tilttool/match/startfetch');
     }
 
-    public sendPlayerMatchData(playerInfo: {}) {
+    public sendPlayerMatchData(playerInfo: Record<string, MatchParticipant[]>) {
         if(this.sender === undefined) {
             console.log("Sender is undefined, dropping message");
             return
