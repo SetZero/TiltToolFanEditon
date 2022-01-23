@@ -6,10 +6,11 @@ export default class StaticDataProtocol {
 
     public static registerStaticDataProtocol() {
         protocol.registerFileProtocol(StaticDataProtocol.ProtocolName, (request, callback) => {
-            const url = request.url.replace(StaticDataProtocol.ProtocolName + '://getMediaFile/', '')
+            const url = request.url.toLowerCase().replace(StaticDataProtocol.ProtocolName + '://getmediafile/', '');
             try {
-                console.log("getting file: ", url);
-                return callback({path: Path.join(app.getPath('userData'), 'tiltTool', url)})
+                let path = Path.join(app.getPath('userData'), 'tiltTool', url);
+                console.log("getting file: ", path);
+                return callback({path: path})
             }
             catch (error) {
                 console.error(error)
