@@ -163,7 +163,7 @@ export enum RegionalRoute {
 
 export default class RiotApiFetchHelper {
     private _region: Region | undefined = undefined;
-    private _api_key: String | undefined = undefined;
+    private _api_key: string | undefined = undefined;
     private _regionalRoute: RegionalRoute | undefined = undefined;
 
     public get region(): Region | undefined {
@@ -187,7 +187,7 @@ export default class RiotApiFetchHelper {
 
     private constructor() { }
 
-    public static async build(clientInfo: ClientInfo, riot_api_key: String | undefined): Promise<RiotApiFetchHelper> {
+    public static async build(clientInfo: ClientInfo, riot_api_key: string | undefined): Promise<RiotApiFetchHelper> {
         const riotApiFetchHelper = new RiotApiFetchHelper();
         riotApiFetchHelper._clientInfo = clientInfo;
         riotApiFetchHelper.region = riotApiFetchHelper._clientInfo.region;
@@ -197,7 +197,7 @@ export default class RiotApiFetchHelper {
         return riotApiFetchHelper;
     }
 
-    public async getSummonerInfo(summoners: Array<String>) {
+    public async getSummonerInfo(summoners: Array<string>) {
         let s = new Array<SummonerInfo>();
         s.push({})
 
@@ -246,7 +246,7 @@ export default class RiotApiFetchHelper {
         return (await axios.get(apiCallUrl, {})).data;
     }
 
-    public async test(rpi_key: String | undefined) {
+    public async test(rpi_key: string | undefined) {
         const name = "asdf"
         const apiCallUrl = this.buildRiotBaseUrl() + "/lol/summoner/v4/summoners/by-name/" + name + "?api_key=" + rpi_key;
         console.log(apiCallUrl);
@@ -257,17 +257,17 @@ export default class RiotApiFetchHelper {
     }
 
     /* match */
-    public async getMatchesByPuuid(puuid: String) {
+    public async getMatchesByPuuid(puuid: string) {
         const apiCallUrl = this.buildRegionalRouteBaseUrl() + "/lol/match/v5/matches/by-puuid/" + puuid + "/ids?api_key=" + this._api_key;
         return (await axios.get(apiCallUrl, {})).data;
     }
 
-    public async getMatchInfoByMatchId(match_id: String) {
+    public async getMatchInfoByMatchId(match_id: string) {
         const apiCallUrl = this.buildRegionalRouteBaseUrl() + "/lol/match/v5/matches/" + match_id + "?api_key=" + this._api_key;
         return (await axios.get(apiCallUrl, {})).data;
     }
 
-    public async getAllMatchInfoBySummonerName(summoner_name: String) {
+    public async getAllMatchInfoBySummonerName(summoner_name: string) {
         const match_ids = await this.getMatchesBySummonerName(summoner_name);
         const match_info = new Array<any>();
         for (var i = match_ids.length - 1; i >= 0; i--) {
@@ -290,55 +290,55 @@ export default class RiotApiFetchHelper {
         return (await axios.get(apiCallUrl, {})).data;
     }
 
-    public async getSummonerBySummonerName(summoner_name: String) {
-        const apiCallUrl = this.buildRiotBaseUrl() + "/lol/summoner/v4/summoners/by-name/" + summoner_name + "?api_key=" + this._api_key;
+    public async getSummonerBySummonerName(summoner_name: string) {
+        const apiCallUrl = this.buildRiotBaseUrl() + "/lol/summoner/v4/summoners/by-name/" + encodeURIComponent(summoner_name) + "?api_key=" + this._api_key;
         return (await axios.get(apiCallUrl, {})).data;
     }
 
-    public async getSummonerByPuuid(puuid: String) {
+    public async getSummonerByPuuid(puuid: string) {
         const apiCallUrl = this.buildRiotBaseUrl() + "/lol/summoner/v4/summoners/by-puuid/" + puuid + "?api_key=" + this._api_key;
         console.log(apiCallUrl);
         return (await axios.get(apiCallUrl, {})).data;
     }
 
     /* champion-masteries */
-    public async getChampionMasteriesBySummonerId(summoner_id: String) {
+    public async getChampionMasteriesBySummonerId(summoner_id: string) {
         const apiCallUrl = this.buildRiotBaseUrl() + "/lol/champion-mastery/v4/champion-masteries/by-summoner/" + summoner_id + "?api_key=" + this._api_key;
         return (await axios.get(apiCallUrl, {})).data;
     }
 
-    public async getChampionMasteryScoresBySummonerId(summoner_id: String) {
+    public async getChampionMasteryScoresBySummonerId(summoner_id: string) {
         const apiCallUrl = this.buildRiotBaseUrl() + " /lol/champion-mastery/v4/scores/by-summoner/ " + summoner_id + "?api_key=" + this._api_key;
         return (await axios.get(apiCallUrl, {})).data;
 
     }
 
     /* helper functions*/
-    public async getPuuidBySummonerName(summoner_name: String) {
+    public async getPuuidBySummonerName(summoner_name: string) {
         return (await this.getSummonerBySummonerName(summoner_name)).puuid;
     }
 
-    public async getSummonerIdBySummonerName(summoner_name: String) {
+    public async getSummonerIdBySummonerName(summoner_name: string) {
         return (await this.getSummonerBySummonerName(summoner_name)).id;
     }
 
-    public async getAccountIdBySummonerName(summoner_name: String) {
+    public async getAccountIdBySummonerName(summoner_name: string) {
         return (await this.getSummonerBySummonerName(summoner_name)).accountId;
     }
 
-    public async getChampionMasteriesBySummonerName(summoner_name: String) {
-        return (await this.getChampionMasteriesBySummonerId(await this.getSummonerIdBySummonerName(summoner_name)));
+    public async getChampionMasteriesBySummonerName(summoner_name: string) {
+        return this.getChampionMasteriesBySummonerId(await this.getSummonerIdBySummonerName(summoner_name));
     }
 
-    public async getChampionMasteryScoresBySummonerName(summoner_name: String) {
-        return (await this.getChampionMasteryScoresBySummonerId(await this.getSummonerIdBySummonerName(summoner_name)));
+    public async getChampionMasteryScoresBySummonerName(summoner_name: string) {
+        return this.getChampionMasteryScoresBySummonerId(await this.getSummonerIdBySummonerName(summoner_name));
     }
 
-    public async getMatchesBySummonerName(summoner_name: String) {
-        return (await this.getMatchesByPuuid(await this.getPuuidBySummonerName(summoner_name)));
+    public async getMatchesBySummonerName(summoner_name: string) {
+        return this.getMatchesByPuuid(await this.getPuuidBySummonerName(summoner_name));
     }
 
-    public async getParticipantsByMatchId(match_id: String) {
+    public async getParticipantsByMatchId(match_id: string) {
         // todo
     }
 
