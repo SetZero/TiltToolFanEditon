@@ -15,7 +15,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const dotenv = require('dotenv').config({ path: "electron.env" });
 const path = require('path');
 
-protocol.registerSchemesAsPrivileged([{scheme: "datadragon", privileges: {standard: true, secure: true, supportFetchAPI: true}}]);
+StaticDataProtocol.initializeProtocolPriviliges();
 
 async function setupDataHelper(): Promise<ApiDataHelper> {
   return ApiDataHelper.build();
