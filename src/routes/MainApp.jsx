@@ -20,6 +20,16 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import LinearProgress from '@mui/material/LinearProgress';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
+import { Bar } from 'react-chartjs-2';
 
 import { Box, CircularProgress } from '@mui/material';
 
@@ -56,6 +66,15 @@ const StyledTableRow = styled(TableRow, {
 
 class MainApp extends React.Component {
   constructor(props) {
+    ChartJS.register(
+      CategoryScale,
+      LinearScale,
+      BarElement,
+      Title,
+      Tooltip,
+      Legend
+    );
+
     super(props);
     this.state = { playerInfo: {}, startfetch: false };
 
@@ -88,13 +107,31 @@ class MainApp extends React.Component {
     document.removeEventListener("tilttool/match/startfetch", this.startFetchListener);
   }
 
-  CircularProgressWithContent
+  countAggregated(data) {
+    const counts = {};
+    for (const num of data) {
+      counts[num] = counts[num] ? counts[num] + 1 : 1;
+    }
+    return counts;
+  }
 
   summonerInfoTable() {
     // debug
     console.log(this.state.playerInfo);
     return (
       <Container maxWidth="sm">
+        {/*<Bar data={{
+          labels: Object.keys(this.countAggregated(Object.values(this.state.playerInfo).map((player) => player.map((row) => row.championName)))),
+          datasets: Object.entries(this.state.playerInfo).map(([key, value]) => {
+            return {
+              label: key,
+              data: Object.values(this.countAggregated(value.map((row) => row.championName))),
+              borderColor: '#3f51b5',
+              backgroundColor: '#3f51b5',
+            };
+          }),
+
+        }} />*/}
         {Object.entries(this.state.playerInfo).map(([key, value]) => (
           <Card key={key}>
             <CardMedia
@@ -137,6 +174,26 @@ class MainApp extends React.Component {
 
 
 
+              <Accordion>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Typography>Stats</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Bar data={{
+                    labels: Object.keys(this.countAggregated(value.map((row) => row.championName))),
+                    datasets: [{
+                      label: '',
+                      data: Object.values(this.countAggregated(value.map((row) => row.championName))),
+                      borderColor: '#3f51b5',
+                      backgroundColor: '#3f51b5',
+                    }]
+                  }} />
+                </AccordionDetails>
+              </Accordion>
               <Accordion>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
