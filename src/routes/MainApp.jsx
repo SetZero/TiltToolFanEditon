@@ -137,7 +137,7 @@ class MainApp extends React.Component {
             <CardMedia
               component="img"
               height="30"
-              image={"https://ddragon.leagueoflegends.com/cdn/img/champion/loading/" + this.playerDataProcessUtil.getChampionName(this.state.playerInfo, key)  + "_0.jpg"} 
+              image={"datadragon://getmediafile/data/img/champion/loading/" + this.playerDataProcessUtil.getChampionName(this.state.playerInfo, key)  + "_0.jpg"} 
               alt={this.playerDataProcessUtil.getChampionName(this.state.playerInfo, key)}
             />
             
