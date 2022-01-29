@@ -6,15 +6,18 @@ import * as zlib from "zlib";
 import * as tar from "tar";
 import { app } from 'electron';
 import { hashElement } from 'folder-hash';
+import { ChampionInfo, DataCache, Role } from "./StaticDataInfo";
+import { getEnumKeyByEnumValue } from "../utils/utility";
 
-export default class DataDragonHelper {
+export default class DataDragonHelper implements ChampionInfo {
     private static readonly apiUrl = "https://ddragon.leagueoflegends.com/api/versions.json";
     private static readonly baseUrl = "https://ddragon.leagueoflegends.com/cdn/";
     private static readonly libFolder = app.getPath("userData");
     private static readonly appFolder = Path.join(DataDragonHelper.libFolder, "tiltTool");
     private static readonly extractLocation = Path.join(DataDragonHelper.appFolder, "data")
-    private currentVersion = undefined;
+    private currentVersion: string | undefined = undefined;
     private cachedHashValid: undefined | boolean = undefined;
+    private dataCache: DataCache = {};
 
     private constructor() {
         promises.mkdir(DataDragonHelper.appFolder, { recursive: true });
@@ -23,7 +26,27 @@ export default class DataDragonHelper {
     public static async init() {
         const helper = new DataDragonHelper();
         await helper.downloadDataDragonData();
+        await helper.getChampionData();
         return helper;
+    }
+
+    public getRolesForChampion(championId: number): Role[] {
+        let championName = this.dataCache.championInfo?.keys[championId];
+        if (!championName) return [];
+
+        let roles = this.dataCache.championInfo?.data[championName]?.tags;
+        if (!roles) return [];
+
+        return roles.map(e => getEnumKeyByEnumValue(Role, e));
+    }
+
+    private async getChampionData() {
+        let version = await this.getLatestVersion();
+        if (!version) throw new Error("No version found");
+
+        const versionFile = Path.join(DataDragonHelper.extractLocation, version, "data", "en_US", "championFull.json");
+        const championInfo = JSON.parse((await promisify(readFile)(versionFile).catch(() => undefined))?.toString() ?? "null");
+        this.dataCache.championInfo = championInfo;
     }
 
     private async downloadDataDragonData() {

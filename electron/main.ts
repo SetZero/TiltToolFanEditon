@@ -122,6 +122,7 @@ function createWindow() {
     let matchHandler = new MatchHandler(dataHelper, localApiFetchHelper, riotApiFetchHelper);
 
     let ddHelper = await DataDragonHelper.init();
+    console.log("Help: ", ddHelper.getRolesForChampion(1));
     StaticDataProtocol.registerStaticDataProtocol();
   })()
     .then(() => {
