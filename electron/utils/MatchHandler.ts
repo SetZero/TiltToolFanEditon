@@ -63,6 +63,9 @@ export default class MatchHandler {
                             obj[key] = value;
                             return obj;
                         }, {});
+
+                        // processing 
+                        
                         this.ipcMatchHandler.sendPlayerMatchData(obj);
                     }
                 })
