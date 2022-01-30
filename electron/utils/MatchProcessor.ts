@@ -164,10 +164,11 @@ export default class MatchProcessor {
     {   
         let resultMatrix = math.matrix([]);
 
-        let temp_list: (number|undefined)[] = [];
-
+        
         for( let role of roles)
         {
+            // list to calc median from, reset for each role
+            let temp_list: (number|undefined)[] = [];  
             let processor = MatchProcessor.roleProcessors.get(role);
 
             for(let match of matchList)
