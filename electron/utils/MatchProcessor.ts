@@ -1,5 +1,5 @@
 import { MatchParticipant } from "./RiotApiFetchHelper";
-import math, { Matrix } from "mathjs";
+import math, { Matrix, median, number } from "mathjs";
 
 
 enum Role
@@ -147,9 +147,24 @@ export default class MatchProcessor {
 
     }
 
+    private median(numbers : number[])
+    {
+        const sorted = numbers.slice().sort((a,b) => a-b);
+        const middle = Math.floor(sorted.length /2);
+    
+        if (sorted.length % 2  === 0)
+        {
+            return (sorted[middle -1] + sorted[middle]) / 2;
+        }
+    
+        return sorted[middle];
+    }
+
     private processRole(matchList: MatchParticipant[], roles : Role[]) : Matrix
     {   
         let resultMatrix = math.matrix([]);
+
+        let temp_list: (number|undefined)[] = [];
 
         for( let role of roles)
         {
@@ -157,10 +172,12 @@ export default class MatchProcessor {
 
             for(let match of matchList)
             {
-               resultMatrix.set([role], processor?.processRole(match));
+                // fill array with performance rating from processor
+                temp_list.push(processor?.processRole(match)); 
             }
 
-            // TODO: calc median
+            // calc median from list elements, that are not 'undefined'
+            resultMatrix.set([role], median(temp_list.filter((x) => x!== undefined) as number[]));
 
         }
 
